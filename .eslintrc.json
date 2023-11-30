@@ -1,0 +1,25 @@
+{
+  "env": {
+    "es2023": true,
+    "node": true
+  },
+  "extends": "airbnb-base",
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "always"
+      }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 100
+      }
+    ]
+  }
+}
