@@ -1,4 +1,5 @@
 import { ENVS } from './constants/index.js';
+import gracefulShutdown from './utilities/graceful-shutdown.js';
 import logger from './utilities/logger.js';
 
 (async () => {
@@ -8,5 +9,9 @@ import logger from './utilities/logger.js';
     dotenv.config();
     logger('Loaded .env file');
   }
-  return import('./server.js');
+  const { createServer } = await import('./server.js');
+  const server = await createServer();
+
+  process.on('SIGINT', (signal = '') => gracefulShutdown(signal, server));
+  process.on('SIGTERM', (signal = '') => gracefulShutdown(signal, server));
 })();
