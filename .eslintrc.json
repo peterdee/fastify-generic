@@ -15,6 +15,7 @@
         "js": "always"
       }
     ],
+    "import/no-extraneous-dependencies": "off",
     "max-len": [
       "error",
       {
