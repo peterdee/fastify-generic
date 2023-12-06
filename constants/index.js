@@ -5,6 +5,16 @@ export const ENVS = {
   production: 'production',
 };
 
+export const RESPONSE_MESSAGES = {
+  ok: 'OK',
+};
+
+export const STATUS_CODES = {
+  badRequest: 400,
+  ok: 200,
+  unauthorized: 401,
+};
+
 export const TOKENS = {
   access: {
     expirationSeconds: 86400,

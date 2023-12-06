@@ -12,6 +12,8 @@ import logger from './utilities/logger.js';
   const { default: createServer } = await import('./server.js');
   const server = await createServer();
 
-  process.on('SIGINT', (signal) => gracefulShutdown(signal, server));
-  process.on('SIGTERM', (signal) => gracefulShutdown(signal, server));
+  if (APP_ENV !== ENVS.development) {
+    process.on('SIGINT', (signal) => gracefulShutdown(signal, server));
+    process.on('SIGTERM', (signal) => gracefulShutdown(signal, server));
+  }
 })();

@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 
+import indexRouter from './apis/index/index.js';
 import { PORT } from './configuration/index.js';
 
 export default async function createServer() {
@@ -8,6 +9,8 @@ export default async function createServer() {
   });
 
   try {
+    await server.register(indexRouter);
+
     await server.listen({ port: PORT });
     return server;
   } catch (error) {
