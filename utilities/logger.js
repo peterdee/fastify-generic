@@ -5,8 +5,13 @@ import { ENVS } from '../constants/index.js';
 
 const logger = new Console(process.stdout, process.stderr);
 
-export default (...strings) => {
-  if (APP_ENV === ENVS.development) {
-    logger.log(`${new Date().toString()} >`, ...strings);
+/**
+ * Show console log
+ * @param {...*} values
+ * @returns {void}
+ */
+export default (...values) => {
+  if (APP_ENV !== ENVS.production) {
+    logger.log(`${new Date().toString()} >`, ...values);
   }
 };

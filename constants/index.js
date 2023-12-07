@@ -3,14 +3,17 @@ export const DEFAULT_PORT = 9999;
 export const ENVS = {
   development: 'development',
   production: 'production',
+  testing: 'testing',
 };
 
 export const RESPONSE_MESSAGES = {
+  internalServerError: 'INTERNAL_SERVER_ERROR',
   ok: 'OK',
 };
 
 export const STATUS_CODES = {
   badRequest: 400,
+  internalServerError: 500,
   ok: 200,
   unauthorized: 401,
 };
