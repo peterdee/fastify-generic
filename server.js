@@ -3,10 +3,10 @@ import fastify from 'fastify';
 
 import globalErrorHandler from './utilities/global-error-handler.js';
 import notFoundHandler from './utilities/not-found-handler.js';
-import { PORT } from './configuration/index.js';
 
-import indexRouter from './apis/index/index.js';
-import signInRouter from './apis/sign-in/index.js';
+import indexAPI from './apis/index/index.js';
+import signInAPI from './apis/sign-in/index.js';
+import signUpAPI from './apis/sign-up/index.js';
 
 export default async function createServer() {
   const server = fastify({
@@ -17,14 +17,9 @@ export default async function createServer() {
   server.setErrorHandler(globalErrorHandler);
   server.setNotFoundHandler(notFoundHandler);
 
-  try {
-    await server.register(indexRouter);
-    await server.register(signInRouter);
+  await server.register(indexAPI);
+  await server.register(signInAPI);
+  await server.register(signUpAPI);
 
-    await server.listen({ port: PORT });
-    return server;
-  } catch (error) {
-    server.log.error(error);
-    return process.exit(1);
-  }
+  return server;
 }
