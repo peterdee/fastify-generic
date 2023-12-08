@@ -9,5 +9,11 @@ import response from '../../utilities/response.js';
  * @returns {Promise<FastifyReply>}
  */
 export default async function signInController(request, reply) {
-  return response({ reply, request });
+  const { body } = request;
+
+  return response({
+    data: body,
+    reply,
+    request,
+  });
 }

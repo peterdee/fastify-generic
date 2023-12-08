@@ -1,11 +1,12 @@
-import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
 import logger from './logger.js';
+import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
 
 /** @typedef {import('fastify').FastifyReply} FastifyReply */
 /**
  * @typedef {Object} ResponsePayload
  * @property {*} [data=null]
  * @property {Error} [error=null]
+ * @property {*} [errorDetails=null]
  * @property {string} [info=RESPONSE_MESSAGES.ok]
  * @property {FastifyReply} reply
  * @property {import('fastify').FastifyRequest} request
@@ -20,6 +21,7 @@ import logger from './logger.js';
 export default function response({
   data = null,
   error = null,
+  errorDetails = null,
   info = RESPONSE_MESSAGES.ok,
   reply,
   request,
@@ -38,6 +40,10 @@ export default function response({
 
   if (data) {
     payload.data = data;
+  }
+
+  if (errorDetails) {
+    payload.errorDetails = errorDetails;
   }
 
   return reply.status(status).send(payload);

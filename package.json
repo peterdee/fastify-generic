@@ -15,9 +15,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@fastify/formbody": "^7.4.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
+    "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "scryptwrap": "^2.0.0"
   },

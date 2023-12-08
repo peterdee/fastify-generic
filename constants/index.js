@@ -8,12 +8,15 @@ export const ENVS = {
 
 export const RESPONSE_MESSAGES = {
   internalServerError: 'INTERNAL_SERVER_ERROR',
+  notFound: 'NOT_FOUND',
   ok: 'OK',
+  validationError: 'VALIDATION_ERROR',
 };
 
 export const STATUS_CODES = {
   badRequest: 400,
   internalServerError: 500,
+  notFound: 404,
   ok: 200,
   unauthorized: 401,
 };

@@ -1,3 +1,5 @@
+import joi from 'joi';
+
 import CustomError from './custom-error.js';
 import response from './response.js';
 import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
@@ -19,6 +21,15 @@ export default async function globalErrorHandler(error, request, reply) {
       reply,
       request,
       status: error.status,
+    });
+  }
+  if (error instanceof joi.ValidationError) {
+    return response({
+      errorDetails: error.details,
+      info: RESPONSE_MESSAGES.validationError,
+      reply,
+      request,
+      status: STATUS_CODES.badRequest,
     });
   }
   return response({

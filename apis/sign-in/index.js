@@ -1,4 +1,5 @@
 import controller from './controller.js';
+import schema from './schema.js';
 
 /**
  * Register APIs
@@ -6,5 +7,14 @@ import controller from './controller.js';
  * @returns {Promise<void>}
  */
 export default async function register(instance) {
-  instance.get('/api/sign-in', controller);
+  instance.post(
+    '/api/sign-in',
+    {
+      schema: {
+        body: schema,
+      },
+      validatorCompiler: ({ schema: joiSchema }) => (data) => joiSchema.validate(data),
+    },
+    controller,
+  );
 }
