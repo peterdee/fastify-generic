@@ -1,10 +1,9 @@
 import response from '../../utilities/response.js';
-
-/** @typedef {import('fastify').FastifyReply} FastifyReply */
+import '../../types.js';
 
 /**
  * Index controller
- * @param {import('fastify').FastifyRequest} request
+ * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {FastifyReply}
  */

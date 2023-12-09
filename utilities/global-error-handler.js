@@ -1,22 +1,21 @@
 import joi from 'joi';
 
 import CustomError from './custom-error.js';
+import logger from './logger.js';
 import response from './response.js';
 import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
-
-/** @typedef {import('fastify').FastifyReply} FastifyReply */
+import '../types.js';
 
 /**
  * Global error handler
  * @param {CustomError | Error} error
- * @param {import('fastify').FastifyRquest} request
+ * @param {FastifyRquest} request
  * @param {FastifyReply} reply
  * @returns {FastifyReply}
  */
 export default async function globalErrorHandler(error, request, reply) {
   if (error instanceof CustomError) {
     return response({
-      error,
       info: error.info,
       reply,
       request,
@@ -32,8 +31,8 @@ export default async function globalErrorHandler(error, request, reply) {
       status: STATUS_CODES.badRequest,
     });
   }
+  logger('Internal server error:\n', error);
   return response({
-    error,
     info: RESPONSE_MESSAGES.internalServerError,
     reply,
     request,

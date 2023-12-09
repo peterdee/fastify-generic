@@ -1,10 +1,11 @@
 import logger from './logger.js';
+import '../types.js';
 
 /**
  * Graceful shutdown
- * @param {string} signal termination signal
- * @param {import('fastify').FastifyInstance} server Fastify server
- * @returns {Promise<never>}
+ * @param {string} signal
+ * @param {FastifyInstance} server
+ * @returns {Promise<void>}
 */
 export default async function gracefulShutdown(signal, server) {
   logger(`Shutting down with a signal ${signal}`);

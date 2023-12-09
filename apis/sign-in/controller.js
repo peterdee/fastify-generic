@@ -1,11 +1,10 @@
 import response from '../../utilities/response.js';
-
-/** @typedef {import('fastify').FastifyReply} FastifyReply */
+import '../../types.js';
 
 /**
  * Sign in controller
- * @param {import('fastify').FastifyRequest} request request object
- * @param {FastifyReply} reply reply object
+ * @param {FastifyRequest} request
+ * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
  */
 export default async function signInController(request, reply) {

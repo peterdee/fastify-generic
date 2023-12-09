@@ -1,11 +1,9 @@
-import logger from './logger.js';
 import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
 
 /** @typedef {import('fastify').FastifyReply} FastifyReply */
 /**
  * @typedef {Object} ResponsePayload
  * @property {*} [data=null]
- * @property {Error} [error=null]
  * @property {*} [errorDetails=null]
  * @property {string} [info=RESPONSE_MESSAGES.ok]
  * @property {FastifyReply} reply
@@ -20,17 +18,12 @@ import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
  */
 export default function response({
   data = null,
-  error = null,
   errorDetails = null,
   info = RESPONSE_MESSAGES.ok,
   reply,
   request,
   status = STATUS_CODES.ok,
 }) {
-  if (error && status === STATUS_CODES.internalServerError) {
-    logger('Internal server error:\n', error);
-  }
-
   const payload = {
     datetime: Date.now(),
     info,
