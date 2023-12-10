@@ -8,7 +8,7 @@ import '../types.js';
 
 /**
  * Global error handler
- * @param {CustomError | Error} error
+ * @param {CustomError | Error | ValidationError} error
  * @param {FastifyRquest} request
  * @param {FastifyReply} reply
  * @returns {FastifyReply}

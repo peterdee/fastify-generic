@@ -5,7 +5,6 @@ import createServer from '../../server.js';
 import { STATUS_CODES } from '../../constants/index.js';
 
 const USER_EMAIL = 'test-email@test.com';
-const USER_INVALID_EMAIL = 'email@tinvalid';
 const USER_PASSWORD = 'test-password';
 
 describe(
@@ -49,7 +48,7 @@ describe(
         const server = await createServer();
         const response = await server.inject({
           body: {
-            email: USER_INVALID_EMAIL,
+            email: 'email@invalid',
             password: USER_PASSWORD,
           },
           method: 'POST',

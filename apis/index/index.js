@@ -1,8 +1,9 @@
 import controller from './controller.js';
+import '../../types.js';
 
 /**
  * Register APIs
- * @param {import('fastify').FastifyInstance} instance
+ * @param {FastifyInstance} instance
  * @returns {Promise<void>}
  */
 export default async function register(instance) {
