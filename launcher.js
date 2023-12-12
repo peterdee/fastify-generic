@@ -1,18 +1,21 @@
-import { APP_ENV, DATABASE, PORT } from './configuration/index.js';
+import configuration from './configuration/index.js';
 import database from './database/index.js';
 import { ENVS } from './constants/index.js';
 import gracefulShutdown from './utilities/graceful-shutdown.js';
 
-export default async function launch() {
+(async () => {
+  console.log(configuration);
   const { default: createServer } = await import('./server.js');
   const server = await createServer();
 
   try {
-    console.log(DATABASE);
-    // await database.connect(DATABASE.connectionString, DATABASE.databaseName);
-    await server.listen({ port: PORT });
+    await database.connect(
+      configuration.DATABASE.connectionString,
+      configuration.DATABASE.databaseName,
+    );
+    await server.listen({ port: configuration.PORT });
 
-    if (APP_ENV === ENVS.production) {
+    if (configuration.APP_ENV === ENVS.production) {
       process.on('SIGINT', (signal) => gracefulShutdown(signal, server));
       process.on('SIGTERM', (signal) => gracefulShutdown(signal, server));
     }
@@ -20,4 +23,4 @@ export default async function launch() {
     server.log.error(error);
     process.exit(1);
   }
-}
+})();

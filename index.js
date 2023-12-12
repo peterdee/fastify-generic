@@ -5,10 +5,14 @@ import logger from './utilities/logger.js';
   const { APP_ENV = '' } = process.env;
   if (APP_ENV !== ENVS.production) {
     const { default: dotenv } = await import('dotenv');
-    dotenv.config();
-    logger('Loaded .env file', process.env);
+    const { error, parsed } = dotenv.config();
+    if (error) {
+      throw error;
+    }
+    const { default: createConfiguration } = await import('./configuration/index.js');
+    createConfiguration(parsed);
+    logger('Loaded .env file');
   }
 
-  const { default: launch } = await import('./launcher.js');
-  return launch();
+  return import('./launcher.js');
 })();

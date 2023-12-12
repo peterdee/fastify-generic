@@ -6,6 +6,11 @@ export const ENVS = {
   testing: 'testing',
 };
 
+export const DATABASE = {
+  defaultConnectionString: 'mongodb://localhost:27017',
+  defaultDatabaseName: 'fastify-generic',
+};
+
 export const RESPONSE_MESSAGES = {
   internalServerError: 'INTERNAL_SERVER_ERROR',
   notFound: 'NOT_FOUND',
