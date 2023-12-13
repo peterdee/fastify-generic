@@ -1,7 +1,8 @@
 import { MongoClient } from 'mongodb';
 
 import logger from '../utilities/logger.js';
-import './types.js';
+
+export * from './types.js';
 
 class DatabaseConnection {
   /** @type {DatabaseClient} */

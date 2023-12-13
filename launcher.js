@@ -4,7 +4,6 @@ import { ENVS } from './constants/index.js';
 import gracefulShutdown from './utilities/graceful-shutdown.js';
 
 (async () => {
-  console.log(configuration);
   const { default: createServer } = await import('./server.js');
   const server = await createServer();
 

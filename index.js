@@ -1,3 +1,4 @@
+import configuration from './configuration/index.js';
 import { ENVS } from './constants/index.js';
 import logger from './utilities/logger.js';
 
@@ -9,8 +10,10 @@ import logger from './utilities/logger.js';
     if (error) {
       throw error;
     }
-    const { default: createConfiguration } = await import('./configuration/index.js');
-    createConfiguration(parsed);
+    if (parsed && !('APP_ENV' in parsed)) {
+      parsed.APP_ENV = APP_ENV;
+    }
+    configuration.init(parsed);
     logger('Loaded .env file');
   }
 
