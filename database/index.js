@@ -8,6 +8,13 @@ class DatabaseConnection {
   /** @type {DatabaseClient} */
   client = null;
 
+  collections = {
+    Password: 'Password',
+    RefreshToken: 'RefreshToken',
+    User: 'User',
+    UserSecret: 'UserSecret',
+  };
+
   /** @type {DatabaseInstance} */
   db = null;
 

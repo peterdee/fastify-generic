@@ -15,8 +15,8 @@ import gracefulShutdown from './utilities/graceful-shutdown.js';
     await server.listen({ port: configuration.PORT });
 
     if (configuration.APP_ENV === ENVS.production) {
-      process.on('SIGINT', (signal) => gracefulShutdown(signal, server));
-      process.on('SIGTERM', (signal) => gracefulShutdown(signal, server));
+      process.on('SIGINT', (signal) => gracefulShutdown(signal, server, database.client));
+      process.on('SIGTERM', (signal) => gracefulShutdown(signal, server, database.client));
     }
   } catch (error) {
     server.log.error(error);

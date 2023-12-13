@@ -12,9 +12,11 @@ export const DATABASE = {
 };
 
 export const RESPONSE_MESSAGES = {
+  emailIsAlreadyInUse: 'EMAIL_IS_ALREADY_IN_USE',
   internalServerError: 'INTERNAL_SERVER_ERROR',
   notFound: 'NOT_FOUND',
   ok: 'OK',
+  unauthorized: 'UNAUTHORIZED',
   validationError: 'VALIDATION_ERROR',
 };
 
