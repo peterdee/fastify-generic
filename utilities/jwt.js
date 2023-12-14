@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+import logger from './logger.js';
+
 /**
  * Create new token for user
  * @param {number | string} userId user identifier
@@ -22,6 +24,7 @@ export function createToken(userId, tokenSecret, expirationSeconds) {
       },
       (error, encoded) => {
         if (error) {
+          logger('JWT signing error:\n', error);
           return resolve('');
         }
         return resolve(encoded);

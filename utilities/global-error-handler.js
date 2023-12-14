@@ -15,6 +15,9 @@ import '../types.js';
  */
 export default async function globalErrorHandler(error, request, reply) {
   if (error instanceof CustomError) {
+    if (error.status === STATUS_CODES.internalServerError) {
+      logger('Internal server error:\n', error);
+    }
     return response({
       info: error.info,
       reply,

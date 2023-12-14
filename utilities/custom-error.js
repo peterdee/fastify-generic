@@ -5,12 +5,12 @@ export default class CustomError extends Error {
 
   status;
 
-  constructor({
-    info = RESPONSE_MESSAGES.internalServerError,
-    status = STATUS_CODES.internalServerError,
+  constructor(params = {
+    info: RESPONSE_MESSAGES.internalServerError,
+    status: STATUS_CODES.internalServerError,
   }) {
-    super(info);
-    this.info = info;
-    this.status = status;
+    super(params.info);
+    this.info = params.info;
+    this.status = params.status;
   }
 }

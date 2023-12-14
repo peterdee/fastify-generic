@@ -40,6 +40,21 @@ describe(
     );
 
     it(
+      'Should not decoded token if it was modified',
+      async () => {
+        const token = await createToken(USER_ID, TOKEN_SECRET, 0);
+        const partials = token.split('.');
+        const payload = partials[1];
+        const modifiedToken = `${partials[0]}${`${payload}modified`}${partials[2]}`;
+        try {
+          decodeToken(modifiedToken);
+        } catch (error) {
+          assert.ok(error.message === 'jwt malformed');
+        }
+      },
+    );
+
+    it(
       'Should verify token if it was not modified',
       async () => {
         const token = await createToken(USER_ID, TOKEN_SECRET, TOKEN_EXPIRATION);

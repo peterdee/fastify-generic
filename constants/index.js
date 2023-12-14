@@ -16,6 +16,7 @@ export const RESPONSE_MESSAGES = {
   internalServerError: 'INTERNAL_SERVER_ERROR',
   notFound: 'NOT_FOUND',
   ok: 'OK',
+  tokenIsInvalid: 'TOKEN_IS_INVALID',
   unauthorized: 'UNAUTHORIZED',
   validationError: 'VALIDATION_ERROR',
 };
