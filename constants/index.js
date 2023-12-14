@@ -17,6 +17,7 @@ export const RESPONSE_MESSAGES = {
   notFound: 'NOT_FOUND',
   ok: 'OK',
   tokenIsInvalid: 'TOKEN_IS_INVALID',
+  tokenIsMissing: 'TOKEN_IS_MISSING',
   unauthorized: 'UNAUTHORIZED',
   validationError: 'VALIDATION_ERROR',
 };
