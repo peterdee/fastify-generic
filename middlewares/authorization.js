@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import CustomError from '../utilities/custom-error.js';
 import database from '../database/index.js';
 import { decodeToken, verifyToken } from '../utilities/jwt.js';
+import rc from '../redis/index.js';
 import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
 import '../types.js';
 
@@ -36,18 +37,27 @@ export default async function authorization(request) {
 
     const userId = decoded.id;
 
-    // TODO: use Redis to store user secret
-
-    /** @type {UserSecret} */
-    const userSecretRecord = await database
-      .db
-      .collection(database.collections.UserSecret)
-      .findOne({ userId });
-    if (!userSecretRecord) {
-      throw unauthorizedError;
+    let tokenSecret = await rc.client.get(rc.keyFormatter(rc.prefixes.secret, userId));
+    if (!tokenSecret) {
+      /** @type {UserSecret} */
+      const userSecretRecord = await database
+        .db
+        .collection(database.collections.UserSecret)
+        .findOne({ userId });
+      if (!userSecretRecord) {
+        throw unauthorizedError;
+      }
+      tokenSecret = userSecretRecord.secretString;
+      await rc.client.set(
+        rc.keyFormatter(rc.prefixes.secret),
+        tokenSecret,
+        {
+          EX: 1,
+        },
+      );
     }
 
-    await verifyToken(token, userSecretRecord.secretString);
+    await verifyToken(token, tokenSecret);
 
     // TODO: use ALS to pass data to controller
 
