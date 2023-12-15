@@ -14,6 +14,8 @@ class Configuration {
 
   static PORT = constants.DEFAULT_PORT;
 
+  static REDIS_CONNECTION_STRING = constants.DEFAULT_REDIS_CONNECTION_STRING;
+
   static REFRESH_TOKEN_EXPIRATION_SECONDS = constants.TOKENS.refresh.expirationSeconds;
 
   static REFRESH_TOKEN_SECRET = constants.TOKENS.refresh.secret;
@@ -29,6 +31,7 @@ class Configuration {
         || constants.DATABASE.defaultDatabaseName,
     };
     this.PORT &&= Number(parsed.PORT);
+    this.REDIS_CONNECTION_STRING = parsed.REDIS_CONNECTION_STRING;
     this.REFRESH_TOKEN_EXPIRATION_SECONDS &&= parsed.REFRESH_TOKEN_EXPIRATION_SECONDS;
     this.REFRESH_TOKEN_SECRET &&= parsed.REFRESH_TOKEN_SECRET;
   }

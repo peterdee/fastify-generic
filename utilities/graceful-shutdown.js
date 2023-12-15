@@ -7,15 +7,24 @@ import '../types.js';
  * @param {string} signal
  * @param {FastifyInstance} server
  * @param {DatabaseClient} databaseClient
+ * @param {RedisClient} redisClient
  * @returns {Promise<void>}
 */
-export default async function gracefulShutdown(signal, server, databaseClient) {
+export default async function gracefulShutdown(
+  signal,
+  server,
+  databaseClient,
+  redisClient,
+) {
   logger(`Shutting down with a signal ${signal}`);
   if (server) {
     await server.close();
   }
   if (databaseClient) {
     await databaseClient.close();
+  }
+  if (redisClient) {
+    await redisClient.quit();
   }
   process.exit(0);
 }
