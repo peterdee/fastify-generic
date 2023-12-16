@@ -2,6 +2,7 @@ import bodyParser from '@fastify/formbody';
 import cors from '@fastify/cors';
 import fastify from 'fastify';
 import helmet from '@fastify/helmet';
+import { fastifyRequestContext } from '@fastify/request-context'; 
 
 import configuration from './configuration/index.js';
 import { ENVS } from './constants/index.js';
@@ -20,6 +21,7 @@ export default async function createServer() {
   server.register(bodyParser);
   server.register(cors);
   server.register(helmet);
+  server.register(fastifyRequestContext);
   server.setErrorHandler(globalErrorHandler);
   server.setNotFoundHandler(notFoundHandler);
 
