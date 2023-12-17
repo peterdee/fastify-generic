@@ -1,11 +1,11 @@
 import bodyParser from '@fastify/formbody';
 import cors from '@fastify/cors';
 import fastify from 'fastify';
+import { fastifyRequestContext } from '@fastify/request-context';
 import helmet from '@fastify/helmet';
-import { fastifyRequestContext } from '@fastify/request-context'; 
 
 import configuration from './configuration/index.js';
-import { ENVS } from './constants/index.js';
+import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
 import globalErrorHandler from './utilities/global-error-handler.js';
 import notFoundHandler from './utilities/not-found-handler.js';
 
@@ -21,9 +21,16 @@ export default async function createServer() {
   server.register(bodyParser);
   server.register(cors);
   server.register(helmet);
-  server.register(fastifyRequestContext);
   server.setErrorHandler(globalErrorHandler);
   server.setNotFoundHandler(notFoundHandler);
+
+  server.register(fastifyRequestContext, {
+    defaultStoreValues: {
+      [CONTEXT_STORE_KEYS.incomingTimestamp]: Date.now(),
+      [CONTEXT_STORE_KEYS.userId]: null,
+    },
+    hook: 'onRequest',
+  });
 
   await server.register(indexAPI);
   await server.register(signInAPI);

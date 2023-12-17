@@ -1,10 +1,9 @@
-export const DEFAULT_PORT = 9999;
-
-export const ENVS = {
-  development: 'development',
-  production: 'production',
-  testing: 'testing',
+export const CONTEXT_STORE_KEYS = {
+  incomingTimestamp: 'incomingTimestamp',
+  userId: 'userId',
 };
+
+export const DEFAULT_PORT = 9999;
 
 export const DATABASE = {
   defaultConnectionString: 'mongodb://localhost:27017',
@@ -12,6 +11,12 @@ export const DATABASE = {
 };
 
 export const DEFAULT_REDIS_CONNECTION_STRING = 'redis://localhost:6379';
+
+export const ENVS = {
+  development: 'development',
+  production: 'production',
+  testing: 'testing',
+};
 
 export const RESPONSE_MESSAGES = {
   emailIsAlreadyInUse: 'EMAIL_IS_ALREADY_IN_USE',
