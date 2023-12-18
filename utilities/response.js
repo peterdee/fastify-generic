@@ -1,15 +1,19 @@
 import { requestContext } from '@fastify/request-context';
 
-import { CONTEXT_STORE_KEYS, RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
+import {
+  CONTEXT_STORE_KEYS,
+  RESPONSE_MESSAGES,
+  STATUS_CODES,
+} from '../constants/index.js';
+import '../types.js';
 
-/** @typedef {import('fastify').FastifyReply} FastifyReply */
 /**
  * @typedef {Object} ResponsePayload
  * @property {*} [data=null]
  * @property {*} [errorDetails=null]
  * @property {string} [info=RESPONSE_MESSAGES.ok]
  * @property {FastifyReply} reply
- * @property {import('fastify').FastifyRequest} request
+ * @property {FastifyRequest} request
  * @property {number} [status=STATUS_CODES.ok]
  */
 
@@ -43,7 +47,7 @@ export default function response({
 
   const incomingTimestamp = requestContext.get(CONTEXT_STORE_KEYS.incomingTimestamp);
   if (incomingTimestamp) {
-    payload.processingTime = Date.now() - incomingTimestamp;
+    payload.processingTimeMS = Date.now() - incomingTimestamp;
   }
 
   return reply.status(status).send(payload);

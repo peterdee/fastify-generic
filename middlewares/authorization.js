@@ -1,10 +1,16 @@
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
+import { requestContext } from '@fastify/request-context';
 
+import {
+  CONTEXT_STORE_KEYS,
+  RESPONSE_MESSAGES,
+  STATUS_CODES,
+} from '../constants/index.js';
 import CustomError from '../utilities/custom-error.js';
 import database from '../database/index.js';
 import { decodeToken, verifyToken } from '../utilities/jwt.js';
 import rc from '../redis/index.js';
-import { RESPONSE_MESSAGES, STATUS_CODES } from '../constants/index.js';
 import '../types.js';
 
 const unauthorizedError = new CustomError({
@@ -43,7 +49,7 @@ export default async function authorization(request) {
       const userSecretRecord = await database
         .db
         .collection(database.collections.UserSecret)
-        .findOne({ userId });
+        .findOne({ userId: new ObjectId(userId) });
       if (!userSecretRecord) {
         throw unauthorizedError;
       }
@@ -59,9 +65,7 @@ export default async function authorization(request) {
 
     await verifyToken(token, tokenSecret);
 
-    // TODO: use ALS to pass data to controller
-
-    return null;
+    requestContext.set(CONTEXT_STORE_KEYS.userId, userId);
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       throw new CustomError({

@@ -18,6 +18,8 @@ export const ENVS = {
   testing: 'testing',
 };
 
+export const ID_FIELD = '_id';
+
 export const RESPONSE_MESSAGES = {
   emailIsAlreadyInUse: 'EMAIL_IS_ALREADY_IN_USE',
   internalServerError: 'INTERNAL_SERVER_ERROR',

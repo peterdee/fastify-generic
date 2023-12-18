@@ -7,9 +7,11 @@ import helmet from '@fastify/helmet';
 import configuration from './configuration/index.js';
 import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
 import globalErrorHandler from './utilities/global-error-handler.js';
+import incomingTimestamp from './hooks/incoming-timestamp.js';
 import notFoundHandler from './utilities/not-found-handler.js';
 
 import indexAPI from './apis/index/index.js';
+import meAPI from './apis/me/index.js';
 import signInAPI from './apis/sign-in/index.js';
 import signUpAPI from './apis/sign-up/index.js';
 
@@ -18,21 +20,23 @@ export default async function createServer() {
     logger: configuration.APP_ENV === ENVS.development,
   });
 
-  server.register(bodyParser);
-  server.register(cors);
-  server.register(helmet);
+  await server.register(bodyParser);
+  await server.register(cors);
+  await server.register(helmet);
+  await server.register(fastifyRequestContext, {
+    defaultStoreValues: {
+      [CONTEXT_STORE_KEYS.incomingTimestamp]: null,
+      [CONTEXT_STORE_KEYS.userId]: null,
+    },
+  });
+
   server.setErrorHandler(globalErrorHandler);
   server.setNotFoundHandler(notFoundHandler);
 
-  server.register(fastifyRequestContext, {
-    defaultStoreValues: {
-      [CONTEXT_STORE_KEYS.incomingTimestamp]: Date.now(),
-      [CONTEXT_STORE_KEYS.userId]: null,
-    },
-    hook: 'onRequest',
-  });
+  server.addHook('onRequest', incomingTimestamp);
 
   await server.register(indexAPI);
+  await server.register(meAPI);
   await server.register(signInAPI);
   await server.register(signUpAPI);
 

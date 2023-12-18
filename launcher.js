@@ -9,11 +9,14 @@ import redisConnection from './redis/index.js';
   const server = await createServer();
 
   try {
-    await database.connect(
-      configuration.DATABASE.connectionString,
-      configuration.DATABASE.databaseName,
-    );
-    await redisConnection.connect(configuration.REDIS_CONNECTION_STRING);
+    await Promise.all([
+      database.connect(
+        configuration.DATABASE.connectionString,
+        configuration.DATABASE.databaseName,
+      ),
+      redisConnection.connect(configuration.REDIS_CONNECTION_STRING),
+    ]);
+
     await server.listen({ port: configuration.PORT });
 
     if (configuration.APP_ENV === ENVS.production) {
