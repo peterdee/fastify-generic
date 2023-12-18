@@ -4,11 +4,13 @@ import createTimestamp from '../../utilities/create-timestamp.js';
 import { createToken } from '../../utilities/jwt.js';
 import CustomError from '../../utilities/custom-error.js';
 import database from '../../database/index.js';
+import {
+  ID_FIELD,
+  RESPONSE_MESSAGES,
+  STATUS_CODES,
+} from '../../constants/index.js';
 import response from '../../utilities/response.js';
-import { RESPONSE_MESSAGES, STATUS_CODES } from '../../constants/index.js';
 import '../../types.js';
-
-const idField = '_id';
 
 const unauthorizedError = new CustomError({
   info: RESPONSE_MESSAGES.unauthorized,
@@ -39,7 +41,7 @@ export default async function signInController(request, reply) {
 
         /** @type {Password} */
         const passwordRecord = await database.db.collection(database.collections.Password).findOne({
-          userId: userRecord[idField],
+          userId: userRecord[ID_FIELD],
         });
         if (!passwordRecord) {
           throw unauthorizedError;
@@ -54,19 +56,19 @@ export default async function signInController(request, reply) {
         const userSecretRecord = await database
           .db
           .collection(database.collections.UserSecret)
-          .findOne({ userId: userRecord[idField] });
+          .findOne({ userId: userRecord[ID_FIELD] });
         if (!userSecretRecord) {
           throw unauthorizedError;
         }
 
         const [accessToken, refreshToken] = await Promise.all([
           createToken(
-            userRecord[idField],
+            userRecord[ID_FIELD],
             userSecretRecord.secretString,
             configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
           ),
           createToken(
-            userRecord[idField],
+            userRecord[ID_FIELD],
             userSecretRecord.secretString,
             configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
           ),
@@ -79,7 +81,7 @@ export default async function signInController(request, reply) {
         await database.db.collection(database.collections.RefreshToken).insertOne({
           expiresAt: createTimestamp() + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
           tokenString: refreshToken,
-          userId: userRecord[idField],
+          userId: userRecord[ID_FIELD],
         });
 
         return response({

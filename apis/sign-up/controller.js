@@ -1,14 +1,16 @@
-import { createHash } from '../../utilities/hashing.js';
 import configuration from '../../configuration/index.js';
+import { createHash } from '../../utilities/hashing.js';
+import createTimestamp from '../../utilities/create-timestamp.js';
 import { createToken } from '../../utilities/jwt.js';
 import CustomError from '../../utilities/custom-error.js';
 import database from '../../database/index.js';
+import {
+  ID_FIELD,
+  RESPONSE_MESSAGES,
+  STATUS_CODES,
+} from '../../constants/index.js';
 import response from '../../utilities/response.js';
-import { RESPONSE_MESSAGES, STATUS_CODES } from '../../constants/index.js';
-import createTimestamp from '../../utilities/create-timestamp.js';
 import '../../types.js';
-
-const idField = '_id';
 
 /**
  * Sign up controller
@@ -51,7 +53,7 @@ export default async function signUpController(request, reply) {
           .db
           .collection(database.collections.User)
           .insertOne(newUser);
-        newUser[idField] = userId;
+        newUser[ID_FIELD] = userId;
 
         const [passwordHash, secretString] = await Promise.all([
           createHash(password),

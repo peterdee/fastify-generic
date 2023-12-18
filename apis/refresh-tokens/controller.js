@@ -19,7 +19,7 @@ const unauthorizedError = new CustomError({
  * @returns {Promise<FastifyReply>}
  */
 export default async function refreshTokensController(request, reply) {
-  const { body: { refreshToken } } = request;
+  const { body: { refreshToken } = {} } = request;
 
   /** @type {RefreshToken} */
   const refreshTokenRecord = await database
