@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { requestContext } from '@fastify/request-context';
 
+import configuration from '../configuration/index.js';
 import {
   CONTEXT_STORE_KEYS,
   RESPONSE_MESSAGES,
@@ -55,10 +56,10 @@ export default async function authorization(request) {
       }
       tokenSecret = userSecretRecord.secretString;
       await rc.client.set(
-        rc.keyFormatter(rc.prefixes.secret),
+        rc.keyFormatter(rc.prefixes.secret, userId),
         tokenSecret,
         {
-          EX: 1,
+          EX: configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
         },
       );
     }

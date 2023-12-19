@@ -9,6 +9,7 @@ import {
   RESPONSE_MESSAGES,
   STATUS_CODES,
 } from '../../constants/index.js';
+import rc from '../../redis/index.js';
 import response from '../../utilities/response.js';
 import '../../types.js';
 
@@ -71,6 +72,13 @@ export default async function signInController(request, reply) {
             userRecord[ID_FIELD],
             userSecretRecord.secretString,
             configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
+          ),
+          rc.client.set(
+            rc.keyFormatter(rc.prefixes.secret, userRecord[ID_FIELD]),
+            userSecretRecord.secretString,
+            {
+              EX: configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
+            },
           ),
         ]);
 
