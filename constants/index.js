@@ -23,6 +23,7 @@ export const ID_FIELD = '_id';
 export const RESPONSE_MESSAGES = {
   emailIsAlreadyInUse: 'EMAIL_IS_ALREADY_IN_USE',
   internalServerError: 'INTERNAL_SERVER_ERROR',
+  invalidData: 'INVALID_DATA',
   notFound: 'NOT_FOUND',
   ok: 'OK',
   tokenIsExpired: 'TOKEN_IS_EXPIRED',

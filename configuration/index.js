@@ -21,7 +21,7 @@ class Configuration {
   static REFRESH_TOKEN_SECRET = constants.TOKENS.refresh.secret;
 
   static init(parsed = {}) {
-    this.ACCESS_TOKEN_EXPIRATION_SECONDS &&= parsed.ACCESS_TOKEN_EXPIRATION_SECONDS;
+    this.ACCESS_TOKEN_EXPIRATION_SECONDS &&= Number(parsed.ACCESS_TOKEN_EXPIRATION_SECONDS);
     this.ACCESS_TOKEN_SECRET &&= parsed.ACCESS_TOKEN_SECRET;
     this.APP_ENV &&= parsed.APP_ENV;
     this.DATABASE = {
@@ -32,7 +32,7 @@ class Configuration {
     };
     this.PORT &&= Number(parsed.PORT);
     this.REDIS_CONNECTION_STRING = parsed.REDIS_CONNECTION_STRING;
-    this.REFRESH_TOKEN_EXPIRATION_SECONDS &&= parsed.REFRESH_TOKEN_EXPIRATION_SECONDS;
+    this.REFRESH_TOKEN_EXPIRATION_SECONDS &&= Number(parsed.REFRESH_TOKEN_EXPIRATION_SECONDS);
     this.REFRESH_TOKEN_SECRET &&= parsed.REFRESH_TOKEN_SECRET;
   }
 }

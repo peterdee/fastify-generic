@@ -5,3 +5,10 @@
 /** @typedef {import('fastify').FastifyRequest} FastifyRequest */
 /** @typedef {import('redis').RedisClientType} RedisClient */
 /** @typedef {import('joi').ValidationError} ValidationError */
+
+/**
+ * @typedef {Object} Pagination
+ * @property {number} limit
+ * @property {number} offset
+ * @property {number} page
+ */

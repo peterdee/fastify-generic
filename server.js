@@ -14,6 +14,8 @@ import indexAPI from './apis/index/index.js';
 import meAPI from './apis/me/index.js';
 import signInAPI from './apis/sign-in/index.js';
 import signUpAPI from './apis/sign-up/index.js';
+import userAPI from './apis/user/index.js';
+import usersAPI from './apis/users/index.js';
 
 export default async function createServer() {
   const server = fastify({
@@ -39,6 +41,8 @@ export default async function createServer() {
   await server.register(meAPI);
   await server.register(signInAPI);
   await server.register(signUpAPI);
+  await server.register(userAPI);
+  await server.register(usersAPI);
 
   return server;
 }
