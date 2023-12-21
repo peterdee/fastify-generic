@@ -1,5 +1,6 @@
 # Directories
 .idea/
+documentation/
 node_modules/
 
 # Files

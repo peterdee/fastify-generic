@@ -11,6 +11,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env APP_ENV=development node --watch ./index.js",
+    "docs": "apidoc -i ./apis -o ./documentation",
     "lint": "eslint",
     "start": "cross-env APP_ENV=production node ./index.js",
     "test": "cross-env APP_ENV=testing node --test ./"
@@ -28,6 +29,7 @@
     "@fastify/formbody": "^7.4.0",
     "@fastify/helmet": "^11.1.1",
     "@fastify/request-context": "^5.0.0",
+    "@fastify/static": "^6.12.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",

@@ -3,6 +3,8 @@ import cors from '@fastify/cors';
 import fastify from 'fastify';
 import { fastifyRequestContext } from '@fastify/request-context';
 import helmet from '@fastify/helmet';
+import { dirname, join } from 'node:path';
+import serveStatic from '@fastify/static';
 
 import configuration from './configuration/index.js';
 import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
@@ -28,14 +30,28 @@ export default async function createServer() {
   await server.register(bodyParser);
   await server.register(cors);
   await server.register(helmet);
-  await server.register(fastifyRequestContext, {
-    defaultStoreValues: {
-      [CONTEXT_STORE_KEYS.incomingTimestamp]: null,
-      [CONTEXT_STORE_KEYS.paginationQueryData]: null,
-      [CONTEXT_STORE_KEYS.searchQueryData]: null,
-      [CONTEXT_STORE_KEYS.userId]: null,
+  await server.register(
+    fastifyRequestContext,
+    {
+      defaultStoreValues: {
+        [CONTEXT_STORE_KEYS.incomingTimestamp]: null,
+        [CONTEXT_STORE_KEYS.paginationQueryData]: null,
+        [CONTEXT_STORE_KEYS.searchQueryData]: null,
+        [CONTEXT_STORE_KEYS.userId]: null,
+      },
     },
-  });
+  );
+
+  if (configuration.APP_ENV !== ENVS.production) {
+    console.log(dirname(import.meta.url));
+    await server.register(
+      serveStatic,
+      {
+        prefix: '/docs/',
+        root: join(dirname(import.meta.url), 'documentation'),
+      },
+    );
+  }
 
   server.setErrorHandler(globalErrorHandler);
   server.setNotFoundHandler(notFoundHandler);
