@@ -22,7 +22,7 @@ const unauthorizedError = new CustomError({
 /**
  * Authorize request
  * @param {FastifyRequest} request
- * @returns {FastifyReply}
+ * @returns {Promise<void>}
  */
 export default async function authorization(request) {
   const { headers: { authorization: token = '' } = {} } = request;

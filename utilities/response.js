@@ -18,6 +18,24 @@ import '../types.js';
  */
 
 /**
+ * Format paginated data for response
+ * @param {Pagination} paginationQueryData
+ * @param {number} count
+ * @param {unknown[]} results
+ */
+export function formatPaginatedData(paginationQueryData, count, results) {
+  return {
+    pagination: {
+      currentPage: paginationQueryData.page,
+      limit: paginationQueryData.limit,
+      totalCount: count,
+      totalPages: Math.ceil(count / paginationQueryData.limit),
+    },
+    values: results,
+  };
+}
+
+/**
  * Send response
  * @param {ResponsePayload}
  * @returns {FastifyReply}

@@ -1,5 +1,6 @@
 import authorization from '../../middlewares/authorization.js';
 import controller from './controller.js';
+import pagination from '../../middlewares/pagination.js';
 import '../../types.js';
 
 /**
@@ -11,7 +12,7 @@ export default async function register(instance) {
   instance.get(
     '/api/users',
     {
-      preHandler: [authorization],
+      preHandler: [authorization, pagination],
     },
     controller,
   );

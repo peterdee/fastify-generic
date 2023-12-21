@@ -15,19 +15,19 @@ const invalidDataError = new CustomError({
 });
 
 /**
- * Get user account controller
+ * Get a single user by User ID
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
  */
 export default async function getUser(request, reply) {
-  const { params: { userId = '' } = {} } = request;
+  const { params: { id: userId = '' } = {} } = request;
 
   if (!ObjectId.isValid(userId)) {
     throw invalidDataError;
   }
 
-  const user = database
+  const user = await database
     .db
     .collection(database.collections.User)
     .findOne({ [ID_FIELD]: new ObjectId(userId) });

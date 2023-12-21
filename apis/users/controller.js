@@ -1,42 +1,36 @@
-import { ObjectId } from 'mongodb';
+import { requestContext } from '@fastify/request-context';
 
-import CustomError from '../../utilities/custom-error.js';
+import { CONTEXT_STORE_KEYS } from '../../constants/index.js';
 import database from '../../database/index.js';
-import {
-  ID_FIELD,
-  RESPONSE_MESSAGES,
-  STATUS_CODES,
-} from '../../constants/index.js';
-import response from '../../utilities/response.js';
-
-const invalidDataError = new CustomError({
-  info: RESPONSE_MESSAGES.invalidData,
-  status: STATUS_CODES.badRequest,
-});
+import response, { formatPaginatedData } from '../../utilities/response.js';
+import '../../types.js';
 
 /**
- * Get user account controller
+ * Get users
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
  */
-export default async function getUser(request, reply) {
-  const { query: { userId = '' } = {} } = request;
+export default async function getUsers(request, reply) {
+  /** @type {Pagination} */
+  const paginationQueryData = requestContext.get(CONTEXT_STORE_KEYS.paginationQueryData);
 
-  if (!ObjectId.isValid(userId)) {
-    throw invalidDataError;
-  }
-
-  const user = database
-    .db
-    .collection(database.collections.User)
-    .findOne({ [ID_FIELD]: new ObjectId(userId) });
-  if (!user) {
-    throw invalidDataError;
-  }
+  const [users, count] = await Promise.all([
+    database
+      .db
+      .collection(database.collections.User)
+      .find()
+      .skip(paginationQueryData.offset)
+      .limit(paginationQueryData.limit)
+      .toArray(),
+    database
+      .db
+      .collection(database.collections.User)
+      .estimatedDocumentCount(),
+  ]);
 
   return response({
-    data: { user },
+    data: formatPaginatedData(paginationQueryData, count, users),
     reply,
     request,
   });
