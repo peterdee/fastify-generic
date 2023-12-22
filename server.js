@@ -3,13 +3,15 @@ import cors from '@fastify/cors';
 import fastify from 'fastify';
 import { fastifyRequestContext } from '@fastify/request-context';
 import helmet from '@fastify/helmet';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import serveStatic from '@fastify/static';
+import { stat } from 'node:fs/promises';
 
 import configuration from './configuration/index.js';
 import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
 import globalErrorHandler from './utilities/global-error-handler.js';
 import incomingTimestamp from './hooks/incoming-timestamp.js';
+import logger from './utilities/logger.js';
 import notFoundHandler from './utilities/not-found-handler.js';
 
 import indexAPI from './apis/index/index.js';
@@ -29,7 +31,17 @@ export default async function createServer() {
 
   await server.register(bodyParser);
   await server.register(cors);
-  await server.register(helmet);
+  await server.register(
+    helmet,
+    {
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: ['http://localhost:9999/docs/assets/main.bundle.js', 'unsafe-eval'],
+          scriptSrcElem: ['http://localhost:9999/docs/assets/main.bundle.js'],
+        },
+      },
+    },
+  );
   await server.register(
     fastifyRequestContext,
     {
@@ -43,14 +55,20 @@ export default async function createServer() {
   );
 
   if (configuration.APP_ENV !== ENVS.production) {
-    console.log(dirname(import.meta.url));
-    await server.register(
-      serveStatic,
-      {
-        prefix: '/docs/',
-        root: join(dirname(import.meta.url), 'documentation'),
-      },
-    );
+    const documentationPath = join(process.cwd(), 'documentation');
+    try {
+      await stat(documentationPath);
+      await server.register(
+        serveStatic,
+        {
+          prefix: '/docs/',
+          root: join(process.cwd(), 'documentation'),
+        },
+      );
+      logger('Serving API documentation');
+    } catch {
+      logger('API documentation not served: no static files found');
+    }
   }
 
   server.setErrorHandler(globalErrorHandler);
