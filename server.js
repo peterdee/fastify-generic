@@ -31,17 +31,13 @@ export default async function createServer() {
 
   await server.register(bodyParser);
   await server.register(cors);
-  await server.register(
-    helmet,
-    {
-      contentSecurityPolicy: {
-        directives: {
-          scriptSrc: ['http://localhost:9999/docs/assets/main.bundle.js', 'unsafe-eval'],
-          scriptSrcElem: ['http://localhost:9999/docs/assets/main.bundle.js'],
-        },
-      },
-    },
-  );
+
+  const helmetOptions = {};
+  if (configuration.APP_ENV !== ENVS.production) {
+    helmetOptions.contentSecurityPolicy = false;
+  }
+  await server.register(helmet, helmetOptions);
+
   await server.register(
     fastifyRequestContext,
     {
@@ -61,7 +57,9 @@ export default async function createServer() {
       await server.register(
         serveStatic,
         {
+          cacheControl: false,
           prefix: '/docs/',
+          prefixAvoidTrailingSlash: true,
           root: join(process.cwd(), 'documentation'),
         },
       );
