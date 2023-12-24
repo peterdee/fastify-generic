@@ -24,6 +24,13 @@
     "type": "git",
     "url": "git+https://github.com/peterdee/fastify-generic"
   },
+  "apidoc": {
+    "description": "Generic Fastify application",
+    "sampleUrl": true,
+    "title": "fastify-generic",
+    "url" : "http://localhost:9999",
+    "version": "0.0.1"
+  },
   "dependencies": {
     "@fastify/cors": "^8.4.2",
     "@fastify/formbody": "^7.4.0",
