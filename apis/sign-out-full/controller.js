@@ -41,8 +41,14 @@ export default async function signInController(request, reply) {
             .db
             .collection(database.collections.UserSecret)
             .updateOne(
-              { userId: new ObjectId(userId) },
-              { secretString: newSecretString },
+              {
+                userId: new ObjectId(userId),
+              },
+              {
+                $set: {
+                  secretString: newSecretString,
+                },
+              },
             ),
           rc.client.set(
             rc.keyFormatter(rc.prefixes.secret, userId),

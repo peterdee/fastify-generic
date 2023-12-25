@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 import configuration from '../../configuration/index.js';
 import createTimestamp from '../../utilities/create-timestamp.js';
 import { createToken, decodeToken, verifyToken } from '../../utilities/jwt.js';
@@ -21,74 +23,91 @@ const unauthorizedError = new CustomError({
 export default async function refreshTokensController(request, reply) {
   const { body: { refreshToken } = {} } = request;
 
-  /** @type {RefreshToken} */
-  const refreshTokenRecord = await database
-    .db
-    .collection(database.collections.RefreshToken)
-    .findOne({ tokenString: refreshToken });
-  if (!refreshTokenRecord) {
-    throw unauthorizedError;
-  }
-
-  let userId;
+  const session = database.client.startSession();
   try {
-    const decoded = decodeToken(refreshToken);
-    userId = decoded.id;
-  } catch {
-    throw unauthorizedError;
-  }
-  if (!userId) {
-    throw unauthorizedError;
-  }
+    await session.withTransaction(
+      async () => {
+        /** @type {RefreshToken} */
+        const refreshTokenRecord = await database
+          .db
+          .collection(database.collections.RefreshToken)
+          .findOne({ tokenString: refreshToken });
+        if (!refreshTokenRecord) {
+          throw unauthorizedError;
+        }
 
-  /** @type {UserSecret} */
-  const userSecretRecord = await database
-    .db
-    .collection(database.collections.UserSecret)
-    .findOne({ userId });
-  if (!userSecretRecord) {
-    throw unauthorizedError;
-  }
+        let userId;
+        try {
+          const decoded = decodeToken(refreshToken);
+          userId = decoded.id;
+        } catch {
+          throw unauthorizedError;
+        }
+        if (!userId) {
+          throw unauthorizedError;
+        }
 
-  try {
-    await verifyToken(refreshToken, userSecretRecord.secretString);
-  } catch {
-    throw unauthorizedError;
-  }
+        /** @type {UserSecret} */
+        const userSecretRecord = await database
+          .db
+          .collection(database.collections.UserSecret)
+          .findOne({ userId: new ObjectId(userId) });
+        if (!userSecretRecord) {
+          throw unauthorizedError;
+        }
 
-  const [newAccessToken, newRefreshToken] = await Promise.all([
-    createToken(
-      userId,
-      userSecretRecord.secretString,
-      configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
-    ),
-    createToken(
-      userId,
-      userSecretRecord.secretString,
-      configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
-    ),
-  ]);
+        try {
+          await verifyToken(refreshToken, userSecretRecord.secretString);
+        } catch {
+          throw unauthorizedError;
+        }
 
-  await Promise.all([
-    database.db.collection(database.collections.RefreshToken).insertOne({
-      expiresAt: createTimestamp() + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
-      tokenString: newRefreshToken,
-      userId,
-    }),
-    database.db.collection(database.collections.RefreshToken).deleteOne({
-      tokenString: refreshToken,
-      userId,
-    }),
-  ]);
+        const [newAccessToken, newRefreshToken] = await Promise.all([
+          createToken(
+            userId,
+            userSecretRecord.secretString,
+            configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
+          ),
+          createToken(
+            userId,
+            userSecretRecord.secretString,
+            configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
+          ),
+        ]);
 
-  return response({
-    data: {
-      tokens: {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
+        await Promise.all([
+          database
+            .db
+            .collection(database.collections.RefreshToken)
+            .insertOne({
+              expiresAt: createTimestamp() + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
+              tokenString: newRefreshToken,
+              userId,
+            }),
+          database
+            .db
+            .collection(database.collections.RefreshToken)
+            .deleteOne({ tokenString: refreshToken }),
+        ]);
+
+        return response({
+          data: {
+            tokens: {
+              accessToken: newAccessToken,
+              refreshToken: newRefreshToken,
+            },
+          },
+          reply,
+          request,
+        });
       },
-    },
-    reply,
-    request,
-  });
+      {
+        readConcern: { level: 'snapshot' },
+        readPreference: 'primary',
+        writeConcern: { w: 'majority' },
+      },
+    );
+  } finally {
+    await session.endSession();
+  }
 }
