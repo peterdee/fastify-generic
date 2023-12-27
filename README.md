@@ -18,4 +18,8 @@ Generate documentation:
 npm run docs
 ```
 
-Documentation will be available at [http://localhost:{PORT}/docs](http://localhost:{PORT}/docs) once you start the server, however it will not be served if `APP_ENV` environment variable is set to `production`
+Documentation will be available at [http://localhost:9999/docs/](http://localhost:9999/docs/) once you start the server, however it will not be served if `APP_ENV` environment variable is set to `production`
+
+### License
+
+[MIT](./LICENSE.md)
