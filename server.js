@@ -21,6 +21,7 @@ import signInAPI from './apis/sign-in/index.js';
 import signOutAPI from './apis/sign-out/index.js';
 import signOutFullAPI from './apis/sign-out-full/index.js';
 import signUpAPI from './apis/sign-up/index.js';
+import updateAccountAPI from './apis/update-account/index.js';
 import userAPI from './apis/user/index.js';
 import usersAPI from './apis/users/index.js';
 
@@ -81,6 +82,7 @@ export default async function createServer() {
   await server.register(signOutAPI);
   await server.register(signOutFullAPI);
   await server.register(signUpAPI);
+  await server.register(updateAccountAPI);
   await server.register(userAPI);
   await server.register(usersAPI);
 
