@@ -10,6 +10,9 @@ import '../../types.js';
  * @apiName update-account
  * @apiSampleRequest http://localhost:9999/api/update-account
  *
+ * @apiBody {String} firstName User first name
+ * @apiBody {String} lastName User last name
+ *
  * @apiSuccess (200) {Number} datetime Response timestamp
  * @apiSuccess (200) {String} info Response info text
  * @apiSuccess (200) {String} request Request path & method

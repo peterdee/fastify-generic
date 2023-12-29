@@ -23,8 +23,10 @@ class DatabaseConnection {
     if (!this.client) {
       this.client = new MongoClient(connectionString, connectionOptions);
       await this.client.connect();
-      logger('Database connected');
       this.db = this.client.db(databaseName);
+
+      // TODO: add index constraints for collections if necessary
+      logger('Database connected');
     }
   }
 }
