@@ -13,7 +13,7 @@ import response from '../../utilities/response.js';
 import '../../types.js';
 
 /**
- * Sign up controller
+ * Sign up
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
@@ -43,11 +43,15 @@ export default async function signUpController(request, reply) {
           });
         }
 
+        const now = createTimestamp();
+
         /** @type {User} */
         const newUser = {
+          createdAt: now,
           email,
           firstName,
           lastName,
+          updatedAt: now,
         };
         const { insertedId: userId } = await database
           .db
@@ -57,7 +61,7 @@ export default async function signUpController(request, reply) {
 
         const [passwordHash, secretString] = await Promise.all([
           createHash(password),
-          createHash(`${userId}${createTimestamp()}`),
+          createHash(`${userId}${now}`),
         ]);
 
         await Promise.all([
@@ -65,14 +69,18 @@ export default async function signUpController(request, reply) {
             .db
             .collection(database.collections.Password)
             .insertOne({
+              createdAt: now,
               passwordHash,
+              updatedAt: now,
               userId,
             }),
           database
             .db
             .collection(database.collections.UserSecret)
             .insertOne({
+              createdAt: now,
               secretString,
+              updatedAt: now,
               userId,
             }),
         ]);
@@ -98,8 +106,10 @@ export default async function signUpController(request, reply) {
           .db
           .collection(database.collections.RefreshToken)
           .insertOne({
-            expiresAt: createTimestamp() + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
+            createdAt: now,
+            expiresAt: now + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
             tokenString: refreshToken,
+            updatedAt: now,
             userId,
           });
 
@@ -115,11 +125,7 @@ export default async function signUpController(request, reply) {
           request,
         });
       },
-      {
-        readConcern: { level: 'snapshot' },
-        readPreference: 'primary',
-        writeConcern: { w: 'majority' },
-      },
+      database.transactionOptions,
     );
   } finally {
     await session.endSession();

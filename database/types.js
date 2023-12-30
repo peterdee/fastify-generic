@@ -6,31 +6,38 @@
 /** @typedef {import('mongodb').ObjectId} ObjectId */
 
 /**
- * @typedef {Object} Password
+ * @typedef {object} BaseProperties
  * @property {ObjectId} _id
- * @property {string} passwordHash
- * @property {string} userId
+ * @property {number} createdAt
+ * @property {number} updatedAt
  */
 
 /**
- * @typedef {Object} RefreshToken
- * @property {ObjectId} _id
+ * @typedef {object} PasswordProperties
+ * @property {string} passwordHash
+ * @property {string} userId
+ * @typedef {BaseProperties & PasswordProperties} Password
+ */
+
+/**
+ * @typedef {object} RefreshTokenProperties
  * @property {number} expiresAt
  * @property {string} tokenString
  * @property {string} userId
+ * @typedef {BaseProperties & RefreshTokenProperties} RefreshToken
  */
 
 /**
- * @typedef {Object} User
- * @property {ObjectId} _id
+ * @typedef {object} UserProperties
  * @property {string} email
  * @property {string} firstName
  * @property {string} lastName
+ * @typedef {BaseProperties & UserProperties} User
  */
 
 /**
- * @typedef {Object} UserSecret
- * @property {ObjectId} _id
+ * @typedef {object} UserSecretProperties
  * @property {string} secretString
  * @property {string} userId
+ * @typedef {BaseProperties & UserSecretProperties} UserSecret
  */

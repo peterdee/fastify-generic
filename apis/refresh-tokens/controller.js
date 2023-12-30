@@ -15,7 +15,7 @@ const unauthorizedError = new CustomError({
 });
 
 /**
- * Refresh tokens controller
+ * Refresh tokens
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
@@ -75,13 +75,16 @@ export default async function refreshTokensController(request, reply) {
           ),
         ]);
 
+        const now = createTimestamp();
         await Promise.all([
           database
             .db
             .collection(database.collections.RefreshToken)
             .insertOne({
-              expiresAt: createTimestamp() + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
+              createdAt: now,
+              expiresAt: now + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
               tokenString: newRefreshToken,
+              updatedAt: now,
               userId,
             }),
           database
@@ -101,11 +104,7 @@ export default async function refreshTokensController(request, reply) {
           request,
         });
       },
-      {
-        readConcern: { level: 'snapshot' },
-        readPreference: 'primary',
-        writeConcern: { w: 'majority' },
-      },
+      database.transactionOptions,
     );
   } finally {
     await session.endSession();

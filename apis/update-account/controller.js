@@ -2,13 +2,14 @@ import { ObjectId } from 'mongodb';
 import { requestContext } from '@fastify/request-context';
 
 import { CONTEXT_STORE_KEYS, ID_FIELD } from '../../constants/index.js';
+import createTimestamp from '../../utilities/create-timestamp.js';
 import CustomError from '../../utilities/custom-error.js';
 import database from '../../database/index.js';
 import response from '../../utilities/response.js';
 import '../../types.js';
 
 /**
- * Update own account controller
+ * Update own account
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
@@ -26,7 +27,12 @@ export default async function updateAccountController(request, reply) {
     .collection(database.collections.User)
     .updateOne(
       { [ID_FIELD]: new ObjectId(userId) },
-      { $set: { ...body } },
+      {
+        $set: {
+          ...body,
+          updatedAt: createTimestamp(),
+        },
+      },
     );
 
   return response({ reply, request });

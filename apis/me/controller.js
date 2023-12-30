@@ -12,7 +12,7 @@ import database from '../../database/index.js';
 import response from '../../utilities/response.js';
 
 /**
- * Get own account controller
+ * Get own account
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}

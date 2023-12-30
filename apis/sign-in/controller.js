@@ -19,7 +19,7 @@ const unauthorizedError = new CustomError({
 });
 
 /**
- * Sign in controller
+ * Sign in
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
@@ -86,11 +86,17 @@ export default async function signInController(request, reply) {
           throw new CustomError();
         }
 
-        await database.db.collection(database.collections.RefreshToken).insertOne({
-          expiresAt: createTimestamp() + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
-          tokenString: refreshToken,
-          userId: userRecord[ID_FIELD],
-        });
+        const now = createTimestamp();
+        await database
+          .db
+          .collection(database.collections.RefreshToken)
+          .insertOne({
+            createdAt: now,
+            expiresAt: now + configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
+            tokenString: refreshToken,
+            updatedAt: now,
+            userId: userRecord[ID_FIELD],
+          });
 
         return response({
           data: {
@@ -104,11 +110,7 @@ export default async function signInController(request, reply) {
           request,
         });
       },
-      {
-        readConcern: { level: 'snapshot' },
-        readPreference: 'primary',
-        writeConcern: { w: 'majority' },
-      },
+      database.transactionOptions,
     );
   } finally {
     await session.endSession();

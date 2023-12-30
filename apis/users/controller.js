@@ -15,23 +15,33 @@ export default async function getUsers(request, reply) {
   /** @type {Pagination} */
   const paginationQueryData = requestContext.get(CONTEXT_STORE_KEYS.paginationQueryData);
 
-  const [users, count] = await Promise.all([
-    database
-      .db
-      .collection(database.collections.User)
-      .find()
-      .skip(paginationQueryData.offset)
-      .limit(paginationQueryData.limit)
-      .toArray(),
-    database
-      .db
-      .collection(database.collections.User)
-      .estimatedDocumentCount(),
-  ]);
+  const session = database.client.startSession();
+  try {
+    await session.withTransaction(
+      async () => {
+        const [users, count] = await Promise.all([
+          database
+            .db
+            .collection(database.collections.User)
+            .find()
+            .skip(paginationQueryData.offset)
+            .limit(paginationQueryData.limit)
+            .toArray(),
+          database
+            .db
+            .collection(database.collections.User)
+            .estimatedDocumentCount(),
+        ]);
 
-  return response({
-    data: formatPaginatedData(paginationQueryData, count, users),
-    reply,
-    request,
-  });
+        return response({
+          data: formatPaginatedData(paginationQueryData, count, users),
+          reply,
+          request,
+        });
+      },
+      database.transactionOptions,
+    );
+  } finally {
+    await session.endSession();
+  }
 }

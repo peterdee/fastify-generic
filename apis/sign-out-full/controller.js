@@ -12,7 +12,7 @@ import response from '../../utilities/response.js';
 import '../../types.js';
 
 /**
- * Full sign out controller
+ * Full sign out
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
@@ -27,8 +27,9 @@ export default async function signInController(request, reply) {
   try {
     await session.withTransaction(
       async () => {
+        const now = createTimestamp();
         const [newSecretString] = await Promise.all([
-          createHash(`${userId}${createTimestamp()}`),
+          createHash(`${userId}${now}`),
           database
             .db
             .collection(database.collections.RefreshToken)
@@ -47,6 +48,7 @@ export default async function signInController(request, reply) {
               {
                 $set: {
                   secretString: newSecretString,
+                  updatedAt: now,
                 },
               },
             ),
@@ -61,11 +63,7 @@ export default async function signInController(request, reply) {
 
         return response({ reply, request });
       },
-      {
-        readConcern: { level: 'snapshot' },
-        readPreference: 'primary',
-        writeConcern: { w: 'majority' },
-      },
+      database.transactionOptions,
     );
   } finally {
     await session.endSession();

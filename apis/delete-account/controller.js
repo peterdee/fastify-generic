@@ -9,7 +9,7 @@ import response from '../../utilities/response.js';
 import '../../types.js';
 
 /**
- * Delete own account controller
+ * Delete own account
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}
@@ -47,11 +47,7 @@ export default async function deleteAccountController(request, reply) {
 
         return response({ reply, request });
       },
-      {
-        readConcern: { level: 'snapshot' },
-        readPreference: 'primary',
-        writeConcern: { w: 'majority' },
-      },
+      database.transactionOptions,
     );
   } finally {
     await session.endSession();

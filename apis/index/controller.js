@@ -2,7 +2,7 @@ import response from '../../utilities/response.js';
 import '../../types.js';
 
 /**
- * Index controller
+ * Index
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {FastifyReply}

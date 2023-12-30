@@ -7,7 +7,7 @@ import response from '../../utilities/response.js';
 import '../../types.js';
 
 /**
- * Sign out controller
+ * Sign out
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
  * @returns {Promise<FastifyReply>}

@@ -18,6 +18,12 @@ class DatabaseConnection {
   /** @type {DatabaseInstance} */
   db = null;
 
+  transactionOptions = {
+    readConcern: { level: 'snapshot' },
+    readPreference: 'primary',
+    writeConcern: { w: 'majority' },
+  };
+
   async connect(connectionString = '', databaseName = '', connectionOptions = {}) {
     // TODO: possibly there's a better way to check client connection
     if (!this.client) {
