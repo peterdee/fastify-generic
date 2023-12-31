@@ -16,7 +16,7 @@ import '../../types.js';
  * Sign up
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function signUpController(request, reply) {
   const {

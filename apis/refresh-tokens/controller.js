@@ -18,7 +18,7 @@ const unauthorizedError = new CustomError({
  * Refresh tokens
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function refreshTokensController(request, reply) {
   const { body: { refreshToken } = {} } = request;

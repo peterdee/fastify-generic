@@ -15,7 +15,7 @@ import '../../types.js';
  * Full sign out
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function signInController(request, reply) {
   const userId = requestContext.get(CONTEXT_STORE_KEYS.userId);

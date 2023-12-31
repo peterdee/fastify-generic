@@ -9,7 +9,7 @@ import '../../types.js';
  * Get users
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function getUsers(request, reply) {
   /** @type {Pagination} */

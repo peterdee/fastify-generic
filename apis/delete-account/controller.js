@@ -12,7 +12,7 @@ import '../../types.js';
  * Delete own account
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function deleteAccountController(request, reply) {
   const userId = requestContext.get(CONTEXT_STORE_KEYS.userId);

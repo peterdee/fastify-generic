@@ -22,7 +22,7 @@ const unauthorizedError = new CustomError({
  * Sign in
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function signInController(request, reply) {
   const { body: { email, password } } = request;

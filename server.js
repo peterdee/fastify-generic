@@ -14,6 +14,8 @@ import incomingTimestamp from './hooks/incoming-timestamp.js';
 import logger from './utilities/logger.js';
 import notFoundHandler from './utilities/not-found-handler.js';
 
+import changePasswordAPI from './apis/change-password/index.js';
+import deleteAccountAPI from './apis/delete-account/index.js';
 import indexAPI from './apis/index/index.js';
 import meAPI from './apis/me/index.js';
 import refreshTokensAPI from './apis/refresh-tokens/index.js';
@@ -75,6 +77,8 @@ export default async function createServer() {
 
   server.addHook('onRequest', incomingTimestamp);
 
+  await server.register(changePasswordAPI);
+  await server.register(deleteAccountAPI);
   await server.register(indexAPI);
   await server.register(meAPI);
   await server.register(refreshTokensAPI);
