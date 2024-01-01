@@ -1,8 +1,15 @@
 import { ObjectId } from 'mongodb';
 import { requestContext } from '@fastify/request-context';
 
-import { CONTEXT_STORE_KEYS, ID_FIELD } from '../../constants/index.js';
+import { compareHashes, createHash } from '../../utilities/hashing.js';
+import {
+  CONTEXT_STORE_KEYS,
+  ID_FIELD,
+  RESPONSE_MESSAGES,
+  STATUS_CODES,
+} from '../../constants/index.js';
 import createTimestamp from '../../utilities/create-timestamp.js';
+import CustomError from '../../utilities/custom-error.js';
 import database from '../../database/index.js';
 import response from '../../utilities/response.js';
 import '../../types.js';
@@ -21,14 +28,36 @@ export default async function changePasswordController(request, reply) {
   try {
     await session.withTransaction(
       async () => {
+        /** @type {Password} */
+        const passwordRecord = await database
+          .db
+          .collection(database.collections.Password)
+          .findOne({ userId: new ObjectId(userId) });
+        if (!passwordRecord) {
+          throw new CustomError({
+            info: RESPONSE_MESSAGES.unauthorized,
+            status: STATUS_CODES.unauthorized,
+          });
+        }
+
+        const isValid = await compareHashes(body.oldPassword, passwordRecord.passwordHash);
+        if (!isValid) {
+          throw new CustomError({
+            info: RESPONSE_MESSAGES.oldPasswordIsInvalid,
+            status: STATUS_CODES.badRequest,
+          });
+        }
+
+        const newPasswordHash = await createHash(body.newPassword);
+
         await database
           .db
           .collection(database.collections.User)
           .updateOne(
-            { [ID_FIELD]: new ObjectId(userId) },
+            { [ID_FIELD]: passwordRecord[ID_FIELD] },
             {
               $set: {
-                ...body,
+                passwordHash: newPasswordHash,
                 updatedAt: createTimestamp(),
               },
             },

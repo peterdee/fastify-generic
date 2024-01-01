@@ -32,6 +32,7 @@ export const RESPONSE_MESSAGES = {
   invalidData: 'INVALID_DATA',
   notFound: 'NOT_FOUND',
   ok: 'OK',
+  oldPasswordIsInvalid: 'OLD_PASSWORD_IS_INVALID',
   tokenIsExpired: 'TOKEN_IS_EXPIRED',
   tokenIsInvalid: 'TOKEN_IS_INVALID',
   tokenIsMissing: 'TOKEN_IS_MISSING',

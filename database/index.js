@@ -31,7 +31,6 @@ class DatabaseConnection {
       await this.client.connect();
       this.db = this.client.db(databaseName);
 
-      // TODO: add index constraints for collections if necessary
       logger('Database connected');
     }
   }

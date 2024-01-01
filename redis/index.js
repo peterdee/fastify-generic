@@ -15,13 +15,16 @@ class RedisConnection {
     secret: 'secret',
   };
 
+  constructor() {
+    this.keyFormatter = keyFormatter;
+  }
+
   async connect(redisConnectionString = '') {
     this.client = redis.createClient({
       url: redisConnectionString,
     });
     await this.client.connect();
     logger('Redis connected');
-    this.keyFormatter = keyFormatter;
   }
 }
 
