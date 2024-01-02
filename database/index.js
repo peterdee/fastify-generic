@@ -1,5 +1,7 @@
 import { MongoClient } from 'mongodb';
 
+import configuration from '../configuration/index.js';
+import { ENVS } from '../constants/index.js';
 import logger from '../utilities/logger.js';
 
 export * from './types.js';
@@ -27,7 +29,18 @@ class DatabaseConnection {
   async connect(connectionString = '', databaseName = '', connectionOptions = {}) {
     // TODO: possibly there's a better way to check client connection
     if (!this.client) {
-      this.client = new MongoClient(connectionString, connectionOptions);
+      let actualConnectionString = connectionString;
+      if (configuration.APP_ENV === ENVS.testing) {
+        const { MongoMemoryServer } = await import('mongodb-memory-server');
+        const mongoServer = await MongoMemoryServer.create();
+        actualConnectionString = mongoServer.getUri();
+        logger('asdasdasd');
+
+        // TODO: check if this works properly
+        // process.on('SIGINT', () => mongoServer.stop());
+        // process.on('SIGTERM', () => mongoServer.stop());
+      }
+      this.client = new MongoClient(actualConnectionString, connectionOptions);
       await this.client.connect();
       this.db = this.client.db(databaseName);
 

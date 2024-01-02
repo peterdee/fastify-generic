@@ -31,7 +31,7 @@ class Configuration {
         || constants.DATABASE.defaultDatabaseName,
     };
     this.PORT &&= Number(parsed.PORT);
-    this.REDIS_CONNECTION_STRING = parsed.REDIS_CONNECTION_STRING;
+    this.REDIS_CONNECTION_STRING &&= parsed.REDIS_CONNECTION_STRING;
     this.REFRESH_TOKEN_EXPIRATION_SECONDS &&= Number(parsed.REFRESH_TOKEN_EXPIRATION_SECONDS);
     this.REFRESH_TOKEN_SECRET &&= parsed.REFRESH_TOKEN_SECRET;
   }

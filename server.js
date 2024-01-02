@@ -95,6 +95,7 @@ export default async function createServer() {
     server.register(usersAPI),
   ]);
 
+  // TODO: close these connections when Fastify server shuts down
   await Promise.all([
     database.connect(
       configuration.DATABASE.connectionString,
