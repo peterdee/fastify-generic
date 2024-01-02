@@ -8,11 +8,14 @@ import serveStatic from '@fastify/static';
 import { stat } from 'node:fs/promises';
 
 import configuration from './configuration/index.js';
+import database from './database/index.js';
 import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
 import globalErrorHandler from './utilities/global-error-handler.js';
+import gracefulShutdown from './utilities/graceful-shutdown.js';
 import incomingTimestamp from './hooks/incoming-timestamp.js';
 import logger from './utilities/logger.js';
 import notFoundHandler from './utilities/not-found-handler.js';
+import rc from './redis/index.js';
 
 import changePasswordAPI from './apis/change-password/index.js';
 import deleteAccountAPI from './apis/delete-account/index.js';
@@ -77,18 +80,49 @@ export default async function createServer() {
 
   server.addHook('onRequest', incomingTimestamp);
 
-  await server.register(changePasswordAPI);
-  await server.register(deleteAccountAPI);
-  await server.register(indexAPI);
-  await server.register(meAPI);
-  await server.register(refreshTokensAPI);
-  await server.register(signInAPI);
-  await server.register(signOutAPI);
-  await server.register(signOutFullAPI);
-  await server.register(signUpAPI);
-  await server.register(updateAccountAPI);
-  await server.register(userAPI);
-  await server.register(usersAPI);
+  await Promise.all([
+    server.register(changePasswordAPI),
+    server.register(deleteAccountAPI),
+    server.register(indexAPI),
+    server.register(meAPI),
+    server.register(refreshTokensAPI),
+    server.register(signInAPI),
+    server.register(signOutAPI),
+    server.register(signOutFullAPI),
+    server.register(signUpAPI),
+    server.register(updateAccountAPI),
+    server.register(userAPI),
+    server.register(usersAPI),
+  ]);
+
+  await Promise.all([
+    database.connect(
+      configuration.DATABASE.connectionString,
+      configuration.DATABASE.databaseName,
+    ),
+    rc.connect(configuration.REDIS_CONNECTION_STRING),
+  ]);
+
+  if (configuration.APP_ENV === ENVS.production) {
+    process.on(
+      'SIGINT',
+      (signal) => gracefulShutdown(
+        signal,
+        server,
+        database.client,
+        rc.client,
+      ),
+    );
+    process.on(
+      'SIGTERM',
+      (signal) => gracefulShutdown(
+        signal,
+        server,
+        database.client,
+        rc.client,
+      ),
+    );
+  }
 
   return server;
 }
