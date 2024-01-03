@@ -34,7 +34,6 @@ class DatabaseConnection {
         const { MongoMemoryServer } = await import('mongodb-memory-server');
         const mongoServer = await MongoMemoryServer.create();
         actualConnectionString = mongoServer.getUri();
-        logger('asdasdasd');
 
         // TODO: check if this works properly
         // process.on('SIGINT', () => mongoServer.stop());
@@ -44,7 +43,7 @@ class DatabaseConnection {
       await this.client.connect();
       this.db = this.client.db(databaseName);
 
-      logger('Database connected');
+      logger('MongoDB connected');
     }
   }
 }

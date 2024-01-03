@@ -11,7 +11,7 @@ import configuration from './configuration/index.js';
 import database from './database/index.js';
 import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
 import globalErrorHandler from './utilities/global-error-handler.js';
-import gracefulShutdown from './utilities/graceful-shutdown.js';
+import gracefulShutdown from './hooks/graceful-shutdown.js';
 import incomingTimestamp from './hooks/incoming-timestamp.js';
 import logger from './utilities/logger.js';
 import notFoundHandler from './utilities/not-found-handler.js';
@@ -78,6 +78,7 @@ export default async function createServer() {
   server.setErrorHandler(globalErrorHandler);
   server.setNotFoundHandler(notFoundHandler);
 
+  server.addHook('onClose', gracefulShutdown);
   server.addHook('onRequest', incomingTimestamp);
 
   await Promise.all([
@@ -95,7 +96,6 @@ export default async function createServer() {
     server.register(usersAPI),
   ]);
 
-  // TODO: close these connections when Fastify server shuts down
   await Promise.all([
     database.connect(
       configuration.DATABASE.connectionString,
@@ -104,26 +104,20 @@ export default async function createServer() {
     rc.connect(configuration.REDIS_CONNECTION_STRING),
   ]);
 
-  if (configuration.APP_ENV === ENVS.production) {
-    process.on(
-      'SIGINT',
-      (signal) => gracefulShutdown(
-        signal,
-        server,
-        database.client,
-        rc.client,
-      ),
-    );
-    process.on(
-      'SIGTERM',
-      (signal) => gracefulShutdown(
-        signal,
-        server,
-        database.client,
-        rc.client,
-      ),
-    );
-  }
+  process.on(
+    'SIGINT',
+    async (signal) => {
+      logger(`Stopping the server (signal: ${signal})`);
+      await server.close();
+    },
+  );
+  process.on(
+    'SIGTERM',
+    async (signal) => {
+      logger(`Stopping the server (signal: ${signal})`);
+      await server.close();
+    },
+  );
 
   return server;
 }
