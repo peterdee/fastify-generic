@@ -27,17 +27,12 @@ class DatabaseConnection {
   };
 
   async connect(connectionString = '', databaseName = '', connectionOptions = {}) {
-    // TODO: possibly there's a better way to check client connection
     if (!this.client) {
       let actualConnectionString = connectionString;
       if (configuration.APP_ENV === ENVS.testing) {
         const { MongoMemoryServer } = await import('mongodb-memory-server');
         const mongoServer = await MongoMemoryServer.create();
         actualConnectionString = mongoServer.getUri();
-
-        // TODO: check if this works properly
-        // process.on('SIGINT', () => mongoServer.stop());
-        // process.on('SIGTERM', () => mongoServer.stop());
       }
       this.client = new MongoClient(actualConnectionString, connectionOptions);
       await this.client.connect();
