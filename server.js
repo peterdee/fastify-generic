@@ -30,6 +30,8 @@ import updateAccountAPI from './apis/update-account/index.js';
 import userAPI from './apis/user/index.js';
 import usersAPI from './apis/users/index.js';
 
+configuration.init();
+
 export default async function createServer() {
   const server = fastify({
     logger: configuration.APP_ENV === ENVS.development,

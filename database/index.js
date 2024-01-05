@@ -38,7 +38,9 @@ class DatabaseConnection {
       await this.client.connect();
       this.db = this.client.db(databaseName);
 
-      logger('MongoDB connected');
+      logger(
+        `MongoDB connected${configuration.APP_ENV === ENVS.testing ? ' [TESTING]' : ''}`,
+      );
     }
   }
 }
