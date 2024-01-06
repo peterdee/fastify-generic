@@ -24,22 +24,50 @@ describe(
           method: 'POST',
           path: '/api/sign-up',
         });
-        assert.ok(signUpResponse.payload && signUpResponse.payload.status === STATUS_CODES.ok);
+        const responsePayload = signUpResponse.json();
+        assert.ok(
+          responsePayload && responsePayload.status === STATUS_CODES.ok && responsePayload.data,
+        );
 
-        const { tokens } = signUpResponse.payload;
-        assert.ok(tokens && tokens.access);
+        const { tokens } = responsePayload.data;
+        assert.ok(tokens && tokens.accessToken);
 
-        const changePasswordResponse = await server.inject({
+        // if some data is missing
+        const changePasswordResponse1 = await server.inject({
+          body: {
+            newPassword: 'new-password',
+          },
+          headers: { authorization: tokens.accessToken },
+          method: 'PATCH',
+          path: '/api/change-password',
+        });
+        assert.ok(changePasswordResponse1.statusCode === STATUS_CODES.badRequest);
+
+        // if old password is invalid
+        const changePasswordResponse2 = await server.inject({
           body: {
             newPassword: 'new-password',
             oldPassword: `${USER.password}-invalid`,
           },
-          headers: { authorization: tokens.access },
+          headers: { authorization: tokens.accessToken },
           method: 'PATCH',
           path: '/api/change-password',
         });
+        assert.ok(changePasswordResponse2.statusCode === STATUS_CODES.badRequest);
+
+        // if everything is valid
+        const changePasswordResponse3 = await server.inject({
+          body: {
+            newPassword: 'new-password',
+            oldPassword: USER.password,
+          },
+          headers: { authorization: tokens.accessToken },
+          method: 'PATCH',
+          path: '/api/change-password',
+        });
+        assert.ok(changePasswordResponse3.statusCode === STATUS_CODES.ok);
+
         await server.close();
-        assert.ok(changePasswordResponse.statusCode === STATUS_CODES.ok);
       },
     );
   },
