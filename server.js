@@ -99,10 +99,11 @@ export default async function createServer() {
   ]);
 
   await Promise.all([
-    database.connect(
-      configuration.DATABASE.connectionString,
-      configuration.DATABASE.databaseName,
-    ),
+    database.connect({
+      APP_ENV: configuration.APP_ENV,
+      connectionString: configuration.DATABASE.connectionString,
+      databaseName: configuration.DATABASE.databaseName,
+    }),
     rc.connect(configuration.REDIS_CONNECTION_STRING),
   ]);
 

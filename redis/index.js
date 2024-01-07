@@ -22,16 +22,18 @@ class RedisConnection {
   }
 
   async connect(redisConnectionString = '') {
-    if (configuration.APP_ENV === ENVS.testing) {
-      const { default: redisMock } = await import('redis-mock');
-      this.client = redisMock.createClient();
-      logger('Redis connected [TESTING]');
-    } else {
-      this.client = redis.createClient({
-        url: redisConnectionString,
-      });
-      await this.client.connect();
-      logger('Redis connected');
+    if (!this.client) {
+      if (configuration.APP_ENV === ENVS.testing) {
+        const { default: redisMock } = await import('redis-mock');
+        this.client = redisMock.createClient();
+        logger('Redis connected [TESTING]');
+      } else {
+        this.client = redis.createClient({
+          url: redisConnectionString,
+        });
+        await this.client.connect();
+        logger('Redis connected');
+      }
     }
   }
 }

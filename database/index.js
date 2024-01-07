@@ -1,8 +1,7 @@
 import { MongoClient } from 'mongodb';
 
-import configuration from '../configuration/index.js';
-import { ENVS } from '../constants/index.js';
 import logger from '../utilities/logger.js';
+import { ENVS } from '../constants/index.js';
 
 export * from './types.js';
 
@@ -26,20 +25,19 @@ class DatabaseConnection {
     writeConcern: { w: 'majority' },
   };
 
-  async connect(connectionString = '', databaseName = '', connectionOptions = {}) {
+  async connect({
+    APP_ENV = ENVS.development,
+    connectionOptions = {},
+    connectionString = '',
+    databaseName = '',
+  }) {
     if (!this.client) {
-      let actualConnectionString = connectionString;
-      if (configuration.APP_ENV === ENVS.testing) {
-        const { MongoMemoryServer } = await import('mongodb-memory-server');
-        const mongoServer = await MongoMemoryServer.create();
-        actualConnectionString = mongoServer.getUri();
-      }
-      this.client = new MongoClient(actualConnectionString, connectionOptions);
+      this.client = new MongoClient(connectionString, connectionOptions);
       await this.client.connect();
       this.db = this.client.db(databaseName);
 
       logger(
-        `MongoDB connected${configuration.APP_ENV === ENVS.testing ? ' [TESTING]' : ''}`,
+        `MongoDB connected [${APP_ENV.toUpperCase()}]`,
       );
     }
   }

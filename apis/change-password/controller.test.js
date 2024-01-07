@@ -1,7 +1,14 @@
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import {
+  after,
+  before,
+  describe,
+  it,
+} from 'node:test';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import createServer from '../../server.js';
+import database from '../../database/index.js';
 import { STATUS_CODES } from '../../constants/index.js';
 
 /** @typedef {User} */
@@ -12,13 +19,42 @@ const USER = {
   password: 'test',
 };
 
+/**
+ * @typedef {object} Resources
+ * @property {FastifyInstance | null} fastifyServer
+ * @property {MongoMemoryServer | null} mongoServer
+ */
+
+/** @type {Resources} */
+const resources = {
+  fastifyServer: null,
+  mongoServer: null,
+};
+
 describe(
   'Test password changing',
   () => {
+    after(async () => {
+      await resources.fastifyServer.close();
+      await resources.mongoServer.stop();
+    });
+
+    before(async () => {
+      resources.fastifyServer = await createServer();
+      resources.mongoServer = await MongoMemoryServer.create();
+      await database.connect({
+        APP_ENV: process.env.APP_ENV,
+        connectionString: resources.mongoServer.getUri(),
+        databaseName: 'test',
+      });
+
+      
+    });
+
     it(
       'Should allow user to change password',
       async () => {
-        const server = await createServer();
+        const { fastifyServer: server } = resources;
         const signUpResponse = await server.inject({
           body: USER,
           method: 'POST',
@@ -66,8 +102,6 @@ describe(
           path: '/api/change-password',
         });
         assert.ok(changePasswordResponse3.statusCode === STATUS_CODES.ok);
-
-        await server.close();
       },
     );
   },
