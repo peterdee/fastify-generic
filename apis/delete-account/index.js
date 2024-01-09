@@ -31,7 +31,7 @@ import '../../types.js';
  * @returns {Promise<void>}
  */
 export default async function register(instance) {
-  instance.patch(
+  instance.delete(
     '/api/delete-account',
     { preHandler: [authorization] },
     controller,

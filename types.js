@@ -12,3 +12,12 @@
  * @property {number} offset
  * @property {number} page
  */
+
+/**
+ * @typedef {object} TestingResources
+ * @property {string?} accessToken
+ * @property {FastifyInstance | null} fastifyServer
+ * @property {import('mongodb-memory-server').MongoMemoryServer | null} mongoServer
+ * @property {string?} refreshToken
+ * @property {User | null} user
+ */

@@ -36,9 +36,7 @@ class DatabaseConnection {
       await this.client.connect();
       this.db = this.client.db(databaseName);
 
-      logger(
-        `MongoDB connected [${APP_ENV.toUpperCase()}]`,
-      );
+      logger(`MongoDB connected [${APP_ENV.toUpperCase()}]`);
     }
   }
 }
