@@ -83,7 +83,7 @@ describe(
       async () => {
         const { accessToken, fastifyServer: server } = resources;
 
-        const changePasswordResponse3 = await server.inject({
+        const changePasswordResponse = await server.inject({
           body: {
             newPassword: 'new-password',
             oldPassword: USER_DATA.password,
@@ -92,7 +92,7 @@ describe(
           method: 'PATCH',
           path: '/api/change-password',
         });
-        assert.ok(changePasswordResponse3.statusCode === STATUS_CODES.ok);
+        assert.ok(changePasswordResponse.statusCode === STATUS_CODES.ok);
       },
     );
   },

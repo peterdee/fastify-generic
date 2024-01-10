@@ -41,9 +41,10 @@ export default async function signInController(request, reply) {
         }
 
         /** @type {Password} */
-        const passwordRecord = await database.db.collection(database.collections.Password).findOne({
-          userId: userRecord[ID_FIELD],
-        });
+        const passwordRecord = await database
+          .db
+          .collection(database.collections.Password)
+          .findOne({ userId: userRecord[ID_FIELD] });
         if (!passwordRecord) {
           throw unauthorizedError;
         }

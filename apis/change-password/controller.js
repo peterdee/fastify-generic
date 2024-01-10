@@ -18,7 +18,7 @@ import '../../types.js';
  * Change own password
  * @param {FastifyRequest} request
  * @param {FastifyReply} reply
- * @returns {Promise<FastifyReply>}
+ * @returns {Promise<void>}
  */
 export default async function changePasswordController(request, reply) {
   const { body = {} } = request;

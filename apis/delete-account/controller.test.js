@@ -49,12 +49,12 @@ describe(
       async () => {
         const { accessToken, fastifyServer: server, user } = resources;
 
-        const changePasswordResponse = await server.inject({
+        const deleteAccountResponse = await server.inject({
           headers: { authorization: accessToken },
           method: 'DELETE',
           path: '/api/delete-account',
         });
-        assert.ok(changePasswordResponse.statusCode === STATUS_CODES.ok);
+        assert.ok(deleteAccountResponse.statusCode === STATUS_CODES.ok);
 
         const [
           userRecord,

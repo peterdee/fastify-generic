@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
-import logger from '../utilities/logger.js';
 import { ENVS } from '../constants/index.js';
+import logger from '../utilities/logger.js';
 
 export * from './types.js';
 

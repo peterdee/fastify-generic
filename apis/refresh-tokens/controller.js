@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 
 import configuration from '../../configuration/index.js';
@@ -47,18 +48,26 @@ export default async function refreshTokensController(request, reply) {
           throw unauthorizedError;
         }
 
+        const userObjectId = new ObjectId(userId);
+
         /** @type {UserSecret} */
         const userSecretRecord = await database
           .db
           .collection(database.collections.UserSecret)
-          .findOne({ userId: new ObjectId(userId) });
+          .findOne({ userId: userObjectId });
         if (!userSecretRecord) {
           throw unauthorizedError;
         }
 
         try {
           await verifyToken(refreshToken, userSecretRecord.secretString);
-        } catch {
+        } catch (error) {
+          if (error instanceof jwt.TokenExpiredError) {
+            await database
+              .db
+              .collection(database.collections.RefreshToken)
+              .deleteOne({ tokenString: refreshToken });
+          }
           throw unauthorizedError;
         }
 
