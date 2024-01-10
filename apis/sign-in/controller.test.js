@@ -10,7 +10,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import createServer from '../../server.js';
 import { createUser, USER_DATA } from '../../utilities/testing-helpers.js';
 import database from '../../database/index.js';
-import { STATUS_CODES } from '../../constants/index.js';
+import { ID_FIELD, STATUS_CODES } from '../../constants/index.js';
+import rc from '../../redis/index.js';
 import '../../types.js';
 
 /** @type {TestingResources} */
@@ -86,6 +87,77 @@ describe(
           path: '/api/sign-in',
         });
         assert.ok(response.statusCode === STATUS_CODES.badRequest);
+      },
+    );
+
+    it(
+      'Should return 401 error if email is unknown',
+      async () => {
+        const { fastifyServer: server } = resources;
+        const response = await server.inject({
+          body: {
+            email: `new${USER_DATA.email}`,
+            password: USER_DATA.password,
+          },
+          method: 'POST',
+          path: '/api/sign-in',
+        });
+        assert.ok(response.statusCode === STATUS_CODES.unauthorized);
+      },
+    );
+
+    it(
+      'Should return 401 error if password is invalid',
+      async () => {
+        const { fastifyServer: server } = resources;
+        const response = await server.inject({
+          body: {
+            email: USER_DATA.email,
+            password: 'invalid',
+          },
+          method: 'POST',
+          path: '/api/sign-in',
+        });
+        assert.ok(response.statusCode === STATUS_CODES.unauthorized);
+      },
+    );
+
+    it(
+      'Should sign user in if provided data is valid',
+      async () => {
+        const { fastifyServer: server } = resources;
+        const response = await server.inject({
+          body: {
+            email: USER_DATA.email,
+            password: USER_DATA.password,
+          },
+          method: 'POST',
+          path: '/api/sign-in',
+        });
+        assert.ok(response.statusCode === STATUS_CODES.ok);
+
+        const payload = await response.json();
+        const { data } = payload;
+        assert.ok(data);
+
+        const { tokens, user } = data;
+        assert.ok(tokens && tokens.accessToken && tokens.refreshToken);
+        assert.ok(user && user[ID_FIELD] === resources.user[ID_FIELD].toString());
+
+        const storedRefreshToken = await database
+          .db
+          .collection(database.collections.RefreshToken)
+          .findOne({ tokenString: tokens.refreshToken });
+        assert.ok(storedRefreshToken);
+
+        const cachedUserSecret = await rc.client.get(
+          rc.keyFormatter(
+            rc.prefixes.secret,
+            user[ID_FIELD],
+          ),
+        );
+        console.log(cachedUserSecret);
+        assert.ok(cachedUserSecret);
       },
     );
   },

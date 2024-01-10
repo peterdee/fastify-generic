@@ -2,6 +2,8 @@
 
 Generic Fastify project with API documentation, API testing, authorization, database connection, Redis caching, etc.
 
+Some of the code is typed with [JSDoc](https://jsdoc.app), but types are not enforced (not using `@ts-check` directive)
+
 ### API documentation
 
 API documentation is generated using [apiDoc](https://www.npmjs.com/package/apidoc)

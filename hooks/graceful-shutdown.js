@@ -4,9 +4,9 @@ import rc from '../redis/index.js';
 import '../types.js';
 
 /**
- * Graceful shutdown triggered by server termination
+ * Graceful shutdown triggered when Fastify server is closing
  * @returns {Promise<void>}
-*/
+ */
 export default async function gracefulShutdown() {
   if (database.client) {
     await database.client.close();

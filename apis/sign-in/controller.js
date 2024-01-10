@@ -75,7 +75,7 @@ export default async function signInController(request, reply) {
             configuration.REFRESH_TOKEN_EXPIRATION_SECONDS,
           ),
           rc.client.set(
-            rc.keyFormatter(rc.prefixes.secret, userRecord[ID_FIELD]),
+            rc.keyFormatter(rc.prefixes.secret, userRecord[ID_FIELD].toString()),
             userSecretRecord.secretString,
             {
               EX: configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
