@@ -1,5 +1,6 @@
 import bodyParser from '@fastify/formbody';
 import cors from '@fastify/cors';
+import { CronJob } from 'cron';
 import fastify from 'fastify';
 import { fastifyRequestContext } from '@fastify/request-context';
 import helmet from '@fastify/helmet';
@@ -29,6 +30,7 @@ import signUpAPI from './apis/sign-up/index.js';
 import updateAccountAPI from './apis/update-account/index.js';
 import userAPI from './apis/user/index.js';
 import usersAPI from './apis/users/index.js';
+import deleteExpiredRefreshTokens from './utilities/cron.js';
 
 configuration.init();
 
@@ -114,10 +116,19 @@ export default async function createServer() {
     }),
   ]);
 
+  const refreshTokensJob = CronJob.from({
+    cronTime: '0 0 0 * * *',
+    onTick: () => deleteExpiredRefreshTokens(),
+    runOnInit: true,
+    timeZone: 'Europe/London',
+  });
+  refreshTokensJob.start();
+
   process.on(
     'SIGINT',
     async (signal) => {
       logger(`Stopping the server (signal: ${signal})`);
+      refreshTokensJob.stop();
       await server.close();
     },
   );
@@ -125,6 +136,7 @@ export default async function createServer() {
     'SIGTERM',
     async (signal) => {
       logger(`Stopping the server (signal: ${signal})`);
+      refreshTokensJob.stop();
       await server.close();
     },
   );
