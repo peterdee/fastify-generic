@@ -156,7 +156,6 @@ describe(
             user[ID_FIELD],
           ),
         );
-        console.log(cachedUserSecret);
         assert.ok(cachedUserSecret);
       },
     );

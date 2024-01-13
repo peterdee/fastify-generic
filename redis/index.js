@@ -1,6 +1,5 @@
 import redis from 'redis';
 
-import configuration from '../configuration/index.js';
 import { ENVS } from '../constants/index.js';
 import keyFormatter from '../utilities/key-formatter.js';
 import logger from '../utilities/logger.js';
@@ -21,19 +20,14 @@ class RedisConnection {
     this.keyFormatter = keyFormatter;
   }
 
-  async connect(redisConnectionString = '') {
+  async connect({
+    APP_ENV = ENVS.development,
+    connectionString = '',
+  }) {
     if (!this.client) {
-      if (configuration.APP_ENV === ENVS.testing) {
-        const { default: redisMock } = await import('redis-mock');
-        this.client = redisMock.createClient();
-        logger('Redis connected [TESTING]');
-      } else {
-        this.client = redis.createClient({
-          url: redisConnectionString,
-        });
-        await this.client.connect();
-        logger('Redis connected');
-      }
+      this.client = redis.createClient({ url: connectionString });
+      await this.client.connect();
+      logger(`Redis connected [${APP_ENV.toUpperCase()}]`);
     }
   }
 }

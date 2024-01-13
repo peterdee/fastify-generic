@@ -55,6 +55,8 @@ Documentation will be available at [http://localhost:9999/docs/](http://localhos
 
 Tests are done with [`node:assert`](https://nodejs.org/api/assert.html) and [`node:test`](https://nodejs.org/api/test.html)
 
+Tests are using [`mongodb-memory-server`](https://www.npmjs.com/package/mongodb-memory-server) to emulate MongoDB connection, but there are no emulation for Redis (currently no modules are available for that): when tests are running, the app will try to connect to the Redis server specified by the `REDIS_TEST_CONNECTION_STRING` environment variable
+
 Run all tests:
 
 ```shell script

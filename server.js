@@ -104,7 +104,13 @@ export default async function createServer() {
       connectionString: configuration.DATABASE.connectionString,
       databaseName: configuration.DATABASE.databaseName,
     }),
-    rc.connect(configuration.REDIS_CONNECTION_STRING),
+    // TODO: better connection handling for tests, keep for now
+    rc.connect({
+      APP_ENV: configuration.APP_ENV,
+      connectionString: configuration.APP_ENV === ENVS.testing
+        ? configuration.REDIS_TEST_CONNECTION_STRING
+        : configuration.REDIS_CONNECTION_STRING,
+    }),
   ]);
 
   process.on(
