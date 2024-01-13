@@ -71,9 +71,9 @@ export default async function createServer() {
           root: join(process.cwd(), 'documentation'),
         },
       );
-      logger('Serving API documentation');
+      logger('API documentation will be served');
     } catch {
-      logger('API documentation not served: no static files found');
+      logger('API documentation will not be served: no static files found');
     }
   }
 
@@ -110,6 +110,7 @@ export default async function createServer() {
       connectionString: configuration.APP_ENV === ENVS.testing
         ? configuration.REDIS_TEST_CONNECTION_STRING
         : configuration.REDIS_CONNECTION_STRING,
+      flushOnStartup: configuration.REDIS_FLUSH_ON_STARTUP,
     }),
   ]);
 
