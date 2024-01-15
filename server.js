@@ -34,16 +34,21 @@ import deleteExpiredRefreshTokens from './utilities/cron.js';
 
 configuration.init();
 
-export default async function createServer() {
+/**
+ * Create Fastify server
+ * @param {CreateServerOptions} options
+ * @returns {Promise<FastifyInstance>}
+ */
+export default async function createServer(options) {
   const server = fastify({
-    logger: configuration.APP_ENV === ENVS.development,
+    logger: options.APP_ENV === ENVS.development,
   });
 
   await server.register(bodyParser);
   await server.register(cors);
 
   const helmetOptions = {};
-  if (configuration.APP_ENV !== ENVS.production) {
+  if (options.APP_ENV !== ENVS.production) {
     helmetOptions.contentSecurityPolicy = false;
   }
   await server.register(helmet, helmetOptions);
@@ -60,7 +65,7 @@ export default async function createServer() {
     },
   );
 
-  if (configuration.APP_ENV !== ENVS.production) {
+  if (options.APP_ENV !== ENVS.production) {
     const documentationPath = join(process.cwd(), 'documentation');
     try {
       await stat(documentationPath);
@@ -106,13 +111,10 @@ export default async function createServer() {
       connectionString: configuration.DATABASE.connectionString,
       databaseName: configuration.DATABASE.databaseName,
     }),
-    // TODO: better connection handling for tests, keep for now
     rc.connect({
-      APP_ENV: configuration.APP_ENV,
-      connectionString: configuration.APP_ENV === ENVS.testing
-        ? configuration.REDIS_TEST_CONNECTION_STRING
-        : configuration.REDIS_CONNECTION_STRING,
-      flushOnStartup: configuration.REDIS_FLUSH_ON_STARTUP,
+      APP_ENV: options.APP_ENV,
+      connectionString: options.redisOptions.connectionString,
+      flushOnStartup: options.redisOptions.flushOnStartup,
     }),
   ]);
 

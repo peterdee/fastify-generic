@@ -7,6 +7,27 @@
 /** @typedef {import('joi').ValidationError} ValidationError */
 
 /**
+ * @typedef {object} MongoOptions
+ * @property {object} connectionOptions
+ * @property {string} connectionString
+ * @property {string} databaseName
+ */
+
+/**
+ * @typedef {object} RedisOptions
+ * @property {string} connectionString
+ * @property {boolean} flushOnStartup
+ */
+
+/**
+ * @typedef {object} CreateServerOptions
+ * @property {string} APP_ENV
+ * @property {MongoOptions} mongoOptions
+ * @property {number} port
+ * @property {RedisOptions} redisOptions
+ */
+
+/**
  * @typedef {Object} Pagination
  * @property {number} limit
  * @property {number} offset

@@ -26,7 +26,7 @@ describe(
   () => {
     after(async () => {
       await resources.fastifyServer.close();
-      await resources.mongoServer.stop();
+      await resources.mongoServer.stop({ doCleanup: true });
     });
 
     before(async () => {
