@@ -12,9 +12,9 @@ import createServer from '../../server.js';
 import {
   connectDatabases,
   createUser,
-  loadEnvFile,
   USER_DATA,
 } from '../../utilities/testing-helpers.js';
+import loadEnvFile from '../../utilities/load-env-file.js';
 import { STATUS_CODES } from '../../constants/index.js';
 import '../../types.js';
 

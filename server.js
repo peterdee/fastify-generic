@@ -31,7 +31,7 @@ import deleteExpiredRefreshTokens from './utilities/cron.js';
 
 /**
  * Create Fastify server
- * @param {string} APP_ENV
+ * @param {string} APP_ENV application environment
  * @returns {Promise<FastifyInstance>}
  */
 export default async function createServer(APP_ENV) {
@@ -60,7 +60,7 @@ export default async function createServer(APP_ENV) {
     },
   );
 
-  if (APP_ENV !== ENVS.production) {
+  if (APP_ENV === ENVS.development) {
     const documentationPath = join(process.cwd(), 'documentation');
     try {
       await stat(documentationPath);

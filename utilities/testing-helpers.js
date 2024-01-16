@@ -1,5 +1,3 @@
-import { config } from 'dotenv';
-
 import configuration from '../configuration/index.js';
 import { createHash } from './hashing.js';
 import createTimestamp from './create-timestamp.js';
@@ -124,15 +122,4 @@ export async function createUser() {
   } finally {
     await session.endSession();
   }
-}
-
-export function loadEnvFile() {
-  const { error, parsed } = config();
-  if (error) {
-    throw error;
-  }
-  if (parsed && !('APP_ENV' in parsed)) {
-    parsed.APP_ENV = process.env.APP_ENV;
-  }
-  return parsed;
 }

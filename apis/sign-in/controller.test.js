@@ -7,10 +7,16 @@ import {
 import assert from 'node:assert';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
+import configuration from '../../configuration/index.js';
+import {
+  connectDatabases,
+  createUser,
+  USER_DATA,
+} from '../../utilities/testing-helpers.js';
 import createServer from '../../server.js';
-import { createUser, USER_DATA } from '../../utilities/testing-helpers.js';
 import database from '../../database/index.js';
 import { ID_FIELD, STATUS_CODES } from '../../constants/index.js';
+import loadEnvFile from '../../utilities/load-env-file.js';
 import rc from '../../redis/index.js';
 import '../../types.js';
 
@@ -31,13 +37,15 @@ describe(
     });
 
     before(async () => {
+      configuration.init(loadEnvFile());
+
       resources.mongoServer = await MongoMemoryServer.create();
-      await database.connect({
-        APP_ENV: process.env.APP_ENV,
-        connectionString: resources.mongoServer.getUri(),
-        databaseName: 'test',
+      await connectDatabases({
+        APP_ENV: configuration.APP_ENV,
+        mongoConnectionString: resources.mongoServer.getUri(),
+        redisConnectionString: configuration.REDIS_TEST_CONNECTION_STRING,
       });
-      resources.fastifyServer = await createServer();
+      resources.fastifyServer = await createServer(configuration.APP_ENV);
 
       const { refreshToken, user } = await createUser();
       resources.refreshToken = refreshToken;
