@@ -8,15 +8,12 @@ import { join } from 'node:path';
 import serveStatic from '@fastify/static';
 import { stat } from 'node:fs/promises';
 
-import configuration from './configuration/index.js';
-import database from './database/index.js';
 import { CONTEXT_STORE_KEYS, ENVS } from './constants/index.js';
 import globalErrorHandler from './utilities/global-error-handler.js';
 import gracefulShutdown from './hooks/graceful-shutdown.js';
 import incomingTimestamp from './hooks/incoming-timestamp.js';
 import logger from './utilities/logger.js';
 import notFoundHandler from './utilities/not-found-handler.js';
-import rc from './redis/index.js';
 
 import changePasswordAPI from './apis/change-password/index.js';
 import deleteAccountAPI from './apis/delete-account/index.js';
@@ -32,23 +29,21 @@ import userAPI from './apis/user/index.js';
 import usersAPI from './apis/users/index.js';
 import deleteExpiredRefreshTokens from './utilities/cron.js';
 
-configuration.init();
-
 /**
  * Create Fastify server
- * @param {CreateServerOptions} options
+ * @param {string} APP_ENV
  * @returns {Promise<FastifyInstance>}
  */
-export default async function createServer(options) {
+export default async function createServer(APP_ENV) {
   const server = fastify({
-    logger: options.APP_ENV === ENVS.development,
+    logger: APP_ENV === ENVS.development,
   });
 
   await server.register(bodyParser);
   await server.register(cors);
 
   const helmetOptions = {};
-  if (options.APP_ENV !== ENVS.production) {
+  if (APP_ENV !== ENVS.production) {
     helmetOptions.contentSecurityPolicy = false;
   }
   await server.register(helmet, helmetOptions);
@@ -65,7 +60,7 @@ export default async function createServer(options) {
     },
   );
 
-  if (options.APP_ENV !== ENVS.production) {
+  if (APP_ENV !== ENVS.production) {
     const documentationPath = join(process.cwd(), 'documentation');
     try {
       await stat(documentationPath);
@@ -105,32 +100,24 @@ export default async function createServer(options) {
     server.register(usersAPI),
   ]);
 
-  await Promise.all([
-    database.connect({
-      APP_ENV: configuration.APP_ENV,
-      connectionString: configuration.DATABASE.connectionString,
-      databaseName: configuration.DATABASE.databaseName,
-    }),
-    rc.connect({
-      APP_ENV: options.APP_ENV,
-      connectionString: options.redisOptions.connectionString,
-      flushOnStartup: options.redisOptions.flushOnStartup,
-    }),
-  ]);
-
-  const refreshTokensJob = CronJob.from({
-    cronTime: '0 0 0 * * *',
-    onTick: () => deleteExpiredRefreshTokens(),
-    runOnInit: true,
-    timeZone: 'Europe/London',
-  });
-  refreshTokensJob.start();
+  let job;
+  if (APP_ENV !== ENVS.testing) {
+    job = CronJob.from({
+      cronTime: '0 0 0 * * *',
+      onTick: () => deleteExpiredRefreshTokens(),
+      runOnInit: true,
+      timeZone: 'Europe/London',
+    });
+    job.start();
+  }
 
   process.on(
     'SIGINT',
     async (signal) => {
       logger(`Stopping the server (signal: ${signal})`);
-      refreshTokensJob.stop();
+      if (job) {
+        job.stop();
+      }
       await server.close();
     },
   );
@@ -138,7 +125,9 @@ export default async function createServer(options) {
     'SIGTERM',
     async (signal) => {
       logger(`Stopping the server (signal: ${signal})`);
-      refreshTokensJob.stop();
+      if (job) {
+        job.stop();
+      }
       await server.close();
     },
   );

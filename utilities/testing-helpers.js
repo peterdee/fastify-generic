@@ -1,3 +1,5 @@
+import { config } from 'dotenv';
+
 import configuration from '../configuration/index.js';
 import { createHash } from './hashing.js';
 import createTimestamp from './create-timestamp.js';
@@ -12,6 +14,25 @@ export const USER_DATA = {
   lastName: 'test',
   password: 'test',
 };
+
+export async function connectDatabases({
+  APP_ENV,
+  mongoConnectionString,
+  redisConnectionString,
+}) {
+  return Promise.all([
+    database.connect({
+      APP_ENV,
+      connectionString: mongoConnectionString,
+      databaseName: 'test',
+    }),
+    rc.connect({
+      APP_ENV,
+      connectionString: redisConnectionString,
+      flushOnStartup: true,
+    }),
+  ]);
+}
 
 export async function createUser() {
   const now = createTimestamp();
@@ -103,4 +124,15 @@ export async function createUser() {
   } finally {
     await session.endSession();
   }
+}
+
+export function loadEnvFile() {
+  const { error, parsed } = config();
+  if (error) {
+    throw error;
+  }
+  if (parsed && !('APP_ENV' in parsed)) {
+    parsed.APP_ENV = process.env.APP_ENV;
+  }
+  return parsed;
 }
