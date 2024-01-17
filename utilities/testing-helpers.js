@@ -11,6 +11,8 @@ export const USER_DATA = {
   firstName: 'test',
   lastName: 'test',
   password: 'test',
+  passwordHash: '',
+  secretString: '',
 };
 
 export async function connectDatabases({
@@ -58,6 +60,9 @@ export async function createUser() {
           createHash(USER_DATA.password),
           createHash(`${userId}${now}`),
         ]);
+
+        USER_DATA.passwordHash = passwordHash;
+        USER_DATA.secretString = secretString;
 
         await Promise.all([
           database
