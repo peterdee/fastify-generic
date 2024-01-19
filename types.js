@@ -37,6 +37,7 @@
 /**
  * @typedef {object} TestingResources
  * @property {string?} accessToken
+ * @property {object | null} customData
  * @property {FastifyInstance | null} fastifyServer
  * @property {import('mongodb-memory-server').MongoMemoryServer | null} mongoServer
  * @property {string?} refreshToken
