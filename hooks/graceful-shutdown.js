@@ -1,5 +1,3 @@
-import cluster from 'node:cluster';
-
 import configuration from '../configuration/index.js';
 import cron from '../utilities/cron.js';
 import database from '../database/index.js';
@@ -15,19 +13,14 @@ import '../types.js';
 export default async function gracefulShutdown() {
   if (database.client) {
     await database.client.close();
-    if (!configuration.USE_CLUSTER || (configuration.USE_CLUSTER && cluster.isPrimary)) {
-      logger('MongoDB connection closed');
-    }
+    logger('MongoDB connection closed');
   }
   if (rc.client && rc.client.isOpen) {
     await rc.client.quit();
     logger('Redis connection closed');
   }
   if (configuration.APP_ENV !== ENVS.testing) {
-    if (!configuration.USE_CLUSTER || (configuration.USE_CLUSTER && cluster.isPrimary)) {
-      cron.stop();
-      logger('Stopped CRON');
-    }
+    cron.stop();
   }
   process.exit(0);
 }

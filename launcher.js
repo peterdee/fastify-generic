@@ -1,6 +1,3 @@
-import cluster from 'node:cluster';
-import os from 'node:os';
-
 import configuration from './configuration/index.js';
 import cron from './utilities/cron.js';
 import database from './database/index.js';
@@ -24,37 +21,18 @@ import rc from './redis/index.js';
     }),
   ]);
 
+  cron.start();
+
   const { default: createServer } = await import('./server.js');
 
   const server = await createServer(configuration.APP_ENV);
   try {
-    if (configuration.USE_CLUSTER) {
-      if (cluster.isPrimary) {
-        for (let i = 0; i < os.availableParallelism(); i += 1) {
-          cluster.fork({ workerId: i });
-        }
-      } else {
-        await server.listen({ port: configuration.PORT });
-        if (process.workerId === 0) {
-          logger(
-            `Launched the server on port ${configuration.PORT} [APP_ENV: ${
-              configuration.APP_ENV.toUpperCase()
-            }]`,
-          );
-        }
-      }
-    } else {
-      await server.listen({ port: configuration.PORT });
-      logger(
-        `Launched the server on port ${configuration.PORT} [APP_ENV: ${
-          configuration.APP_ENV.toUpperCase()
-        }]`,
-      );
-    }
-
-    if (configuration.APP_ENV !== ENVS.testing) {
-      cron.start();
-    }
+    await server.listen({ port: configuration.PORT });
+    logger(
+      `Launched the server on port ${configuration.PORT} [APP_ENV: ${
+        configuration.APP_ENV.toUpperCase()
+      }]`,
+    );
   } catch (error) {
     server.log.error(error);
     process.exit(1);

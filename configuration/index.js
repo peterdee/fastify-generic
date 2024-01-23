@@ -24,8 +24,6 @@ class Configuration {
 
   static REFRESH_TOKEN_SECRET = constants.TOKENS.refresh.secret;
 
-  static USE_CLUSTER = false;
-
   static #initialized = false;
 
   static init(parsed = {}) {
@@ -45,7 +43,6 @@ class Configuration {
       this.REDIS_TEST_CONNECTION_STRING ||= parsed.REDIS_TEST_CONNECTION_STRING;
       this.REFRESH_TOKEN_EXPIRATION_SECONDS ||= Number(parsed.REFRESH_TOKEN_EXPIRATION_SECONDS);
       this.REFRESH_TOKEN_SECRET ||= parsed.REFRESH_TOKEN_SECRET;
-      this.USE_CLUSTER = parsed.USE_CLUSTER === 'true';
 
       this.#initialized = true;
     }
