@@ -55,16 +55,16 @@ export default async function authorization(request) {
         throw unauthorizedError;
       }
       tokenSecret = userSecretRecord.secretString;
-      await rc.client.set(
-        rc.keyFormatter(rc.prefixes.secret, userId),
-        tokenSecret,
-        {
-          EX: configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
-        },
-      );
     }
 
     await verifyToken(token, tokenSecret);
+    await rc.client.set(
+      rc.keyFormatter(rc.prefixes.secret, userId),
+      tokenSecret,
+      {
+        EX: configuration.ACCESS_TOKEN_EXPIRATION_SECONDS,
+      },
+    );
 
     requestContext.set(CONTEXT_STORE_KEYS.userId, userId);
   } catch (error) {
