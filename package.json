@@ -1,8 +1,8 @@
 {
   "name": "fastify-generic",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
-  "description": "Generic Fastify application",
+  "description": "Generic Fastify project",
   "author": {
     "name": "Peter Dyumin",
     "url": "https://github.com/peterdee"
@@ -29,7 +29,7 @@
     "sampleUrl": true,
     "title": "fastify-generic",
     "url": "http://localhost:9999",
-    "version": "0.0.1"
+    "version": "1.0.0"
   },
   "dependencies": {
     "@fastify/cors": "^8.4.2",
