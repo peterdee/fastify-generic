@@ -19,6 +19,8 @@ The `.env` file is required, see [.env.example](.env.example) for details
 
 ### Launching the server
 
+##### Without Docker container
+
 Launch in `development` with hot reloading:
 
 ```shell script
@@ -31,7 +33,23 @@ Launch in `production`:
 npm start
 ```
 
-Server will be available at http://localhost:9999
+Server will be available at http://localhost:9999 (port `9999` is a default one, you can change it in `.env` file)
+
+##### With Docker container
+
+*Make sure that application will use port `9999`*
+
+Build an image:
+
+```shell script
+docker build -t fastify-generic .
+```
+
+Run container:
+
+```shell script
+docker run fastify-generic
+```
 
 ### API documentation
 
