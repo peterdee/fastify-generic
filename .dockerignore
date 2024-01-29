@@ -1,9 +1,14 @@
 # Directories
+.git/
 .idea/
 documentation/
 node_modules/
 
 # Files
-.dockerenv
 .DS_Store
 .env
+.env.example
+.gitignore
+eslintrc.json
+LICENSE.md
+README.md
