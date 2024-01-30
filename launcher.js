@@ -27,7 +27,10 @@ import rc from './redis/index.js';
 
   const server = await createServer(configuration.APP_ENV);
   try {
-    await server.listen({ port: configuration.PORT });
+    await server.listen({
+      host: '0.0.0.0',
+      port: configuration.PORT,
+    });
     logger(
       `Launched the server on port ${configuration.PORT} [APP_ENV: ${
         configuration.APP_ENV.toUpperCase()

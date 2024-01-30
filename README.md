@@ -37,7 +37,7 @@ Server will be available at http://localhost:9999 (port `9999` is a default one,
 
 ##### With Docker container
 
-*Make sure that application will use port `9999`*
+*Make sure that application uses port `9999`!*
 
 Build an image:
 
@@ -48,8 +48,10 @@ docker build -t fastify-generic .
 Run container:
 
 ```shell script
-docker run fastify-generic
+docker run -p 9999:9999 -d fastify-generic
 ```
+
+Server will be available at http://localhost:9999
 
 ### API documentation
 
