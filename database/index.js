@@ -31,6 +31,7 @@ class DatabaseConnection {
     connectionString = '',
     databaseName = '',
   }) {
+    console.log('@@@@@@@@@@@', connectionString);
     if (!this.client) {
       this.client = new MongoClient(connectionString, connectionOptions);
       await this.client.connect();

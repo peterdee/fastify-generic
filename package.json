@@ -10,11 +10,11 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "cross-env APP_ENV=development node --watch ./index.js",
+    "dev": "cross-env APP_ENV=development NODE_ENV=development node --watch ./index.js",
     "docs": "apidoc -i ./apis -o ./documentation",
     "lint": "eslint",
-    "start": "cross-env APP_ENV=production node ./index.js",
-    "test": "cross-env APP_ENV=testing node --test ./"
+    "start": "cross-env APP_ENV=production NODE_ENV=production node ./index.js",
+    "test": "cross-env APP_ENV=testing NODE_ENV=development node --test ./"
   },
   "engines": {
     "node": ">=20.0.0",
