@@ -1,11 +1,13 @@
 import configuration from './configuration/index.js';
 import loadEnvFile from './utilities/load-env-file.js';
-import logger from './utilities/logger.js';
 
 (() => {
-  const parsed = loadEnvFile();
-  configuration.init(parsed);
-  logger(`Loaded .env file [${parsed.APP_ENV.toUpperCase()}]`);
+  const { ENV_VARIABLES_ORIGIN = '' } = process.env;
+  if (ENV_VARIABLES_ORIGIN !== 'env') {
+    configuration.init(loadEnvFile());
+  } else {
+    configuration.init(process.env);
+  }
 
   return import('./launcher.js');
 })();

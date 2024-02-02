@@ -4,6 +4,6 @@ documentation/
 node_modules/
 
 # Files
-.dockerenv
 .DS_Store
 .env
+.env.compose

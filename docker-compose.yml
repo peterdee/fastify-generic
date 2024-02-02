@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3.8'
 
 services:
   app:
@@ -8,14 +8,28 @@ services:
     container_name: app
     image: nodejs
     restart: unless-stopped
-    env_file: .dockerenv
+    env_file: .env
     environment:
-      - DATABASE_CONNECTION_STRING=mongodb://$DATABASE_USERNAME:$DATABASE_PASSWORD@$mongodb/?retryWrites=true&w=majority
+      - ENV_VARIABLES_ORIGIN=env
+      - PORT=${PORT}
+      - DATABASE_HOST=mongodb
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_PORT=27017
+      - DATABASE_PREFIX=mongodb://
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - ACCESS_TOKEN_EXPIRATION_SECONDS=${ACCESS_TOKEN_EXPIRATION_SECONDS}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - REFRESH_TOKEN_EXPIRATION_SECONDS=${REFRESH_TOKEN_EXPIRATION_SECONDS}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - REDIS_FLUSH_ON_STARTUP=${REDIS_FLUSH_ON_STARTUP}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
     depends_on:
       - mongodb
       - redis
     ports:
-      - "9999:9999"
+      - ${PORT}:${PORT}
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
@@ -28,8 +42,9 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$DATABASE_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD=$DATABASE_PASSWORD
+      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
     volumes:
       - dbdata:/data/db
     networks:
@@ -39,10 +54,13 @@ services:
     container_name: redis
     image: redis:latest
     restart: always
+    env_file: .env
     volumes:
       - redisdata:/data/redis
     networks:
       - app-network
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
 
 networks:
   app-network:
