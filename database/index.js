@@ -32,18 +32,23 @@ class DatabaseConnection {
     password,
     port,
     prefix,
+    testConnectionString = '',
     username,
   }) {
     if (!this.client) {
       let connectionString = prefix;
-      if (username) {
-        connectionString += username;
-        if (password) {
-          connectionString += `:${password}`;
+      if (APP_ENV === ENVS.testing) {
+        connectionString = testConnectionString;
+      } else {
+        if (username) {
+          connectionString += username;
+          if (password) {
+            connectionString += `:${password}`;
+          }
+          connectionString += '@';
         }
-        connectionString += '@';
+        connectionString += `${host}${port ? `:${port}` : ''}/?retryWrites=true&w=majority`;
       }
-      connectionString += `${host}${port ? `:${port}` : ''}/?retryWrites=true&w=majority`;
       this.client = new MongoClient(connectionString);
       await this.client.connect();
       this.db = this.client.db(name);

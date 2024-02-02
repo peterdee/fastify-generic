@@ -11,11 +11,9 @@ class Configuration {
 
   static PORT;
 
-  static REDIS_CONNECTION_STRING;
+  static REDIS;
 
-  static REDIS_FLUSH_ON_STARTUP;
-
-  static REDIS_TEST_CONNECTION_STRING;
+  static REDIS_TEST;
 
   static REFRESH_TOKEN_EXPIRATION_SECONDS;
 
@@ -46,13 +44,20 @@ class Configuration {
 
       this.PORT = Number(parsed.PORT) || constants.DEFAULT_PORT;
 
-      this.REDIS_CONNECTION_STRING = parsed.REDIS_CONNECTION_STRING
-        || constants.DEFAULT_REDIS_CONNECTION_STRING;
+      this.REDIS = {
+        flushOnStartup: parsed.REDIS_FLUSH_ON_STARTUP === 'true',
+        host: parsed.REDIS_HOST || constants.REDIS.host,
+        password: parsed.REDIS_PASSWORD || '',
+        port: parsed.REDIS_PORT || constants.REDIS.port,
+        username: parsed.REDIS_USERNAME || '',
+      };
 
-      this.REDIS_FLUSH_ON_STARTUP = parsed.REDIS_FLUSH_ON_STARTUP === 'true';
-
-      this.REDIS_TEST_CONNECTION_STRING = parsed.REDIS_TEST_CONNECTION_STRING
-        || constants.DEFAULT_REDIS_CONNECTION_STRING;
+      this.REDIS_TEST = {
+        host: parsed.REDIS_TEST_HOST || constants.REDIS.host,
+        password: parsed.REDIS_TEST_PASSWORD || '',
+        port: parsed.REDIS_TEST_PORT || constants.REDIS.port,
+        username: parsed.REDIS_TEST_USERNAME || '',
+      };
 
       this.REFRESH_TOKEN_EXPIRATION_SECONDS = Number(parsed.REFRESH_TOKEN_EXPIRATION_SECONDS)
         || constants.TOKENS.refresh.expirationSeconds;

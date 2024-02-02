@@ -13,10 +13,9 @@ import rc from './redis/index.js';
     }),
     rc.connect({
       APP_ENV: configuration.APP_ENV,
-      connectionString: configuration.APP_ENV === ENVS.testing
-        ? configuration.REDIS_TEST_CONNECTION_STRING
-        : configuration.REDIS_CONNECTION_STRING,
-      flushOnStartup: configuration.REDIS_FLUSH_ON_STARTUP,
+      ...(configuration.APP_ENV === ENVS.testing
+        ? configuration.REDIS_TEST
+        : configuration.REDIS),
     }),
   ]);
 

@@ -40,7 +40,7 @@ describe(
       await connectDatabases({
         APP_ENV: configuration.APP_ENV,
         mongoConnectionString: resources.mongoServer.getUri(),
-        redisConnectionString: configuration.REDIS_TEST_CONNECTION_STRING,
+        redisConnectionOptions: configuration.REDIS_TEST,
       });
       resources.fastifyServer = await createServer(configuration.APP_ENV);
 

@@ -18,18 +18,16 @@ export const USER_DATA = {
 export async function connectDatabases({
   APP_ENV,
   mongoConnectionString,
-  redisConnectionString,
+  redisConnectionOptions,
 }) {
   return Promise.all([
     database.connect({
       APP_ENV,
-      connectionString: mongoConnectionString,
-      databaseName: 'test',
+      testConnectionString: mongoConnectionString,
     }),
     rc.connect({
       APP_ENV,
-      connectionString: redisConnectionString,
-      flushOnStartup: true,
+      ...redisConnectionOptions,
     }),
   ]);
 }

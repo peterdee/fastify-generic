@@ -22,10 +22,22 @@ class RedisConnection {
 
   async connect({
     APP_ENV = ENVS.development,
-    connectionString = '',
-    flushOnStartup = false,
+    flushOnStartup,
+    host,
+    password,
+    port,
+    username,
   }) {
     if (!this.client) {
+      let connectionString = 'redis://';
+      if (username) {
+        connectionString += username;
+        if (password) {
+          connectionString += `:${password}`;
+        }
+        connectionString += '@';
+      }
+      connectionString += `${host}:${port}`;
       this.client = redis.createClient({ url: connectionString });
       await this.client.connect();
       logger(`Redis connected [${APP_ENV.toUpperCase()}]`);

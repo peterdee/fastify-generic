@@ -17,8 +17,6 @@ export const DATABASE = {
   prefix: 'mongodb://',
 };
 
-export const DEFAULT_REDIS_CONNECTION_STRING = 'redis://localhost:6379';
-
 export const ENVS = {
   development: 'development',
   production: 'production',
@@ -26,6 +24,11 @@ export const ENVS = {
 };
 
 export const ID_FIELD = '_id';
+
+export const REDIS = {
+  host: 'localhost',
+  port: 6379,
+};
 
 export const RESPONSE_MESSAGES = {
   emailIsAlreadyInUse: 'EMAIL_IS_ALREADY_IN_USE',
