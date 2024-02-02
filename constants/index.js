@@ -12,8 +12,9 @@ export const DEFAULT_PAGE = 1;
 export const DEFAULT_PORT = 9999;
 
 export const DATABASE = {
-  defaultConnectionString: 'mongodb://localhost:27017',
-  defaultDatabaseName: 'fastify-generic',
+  host: 'localhost',
+  name: 'fastify-generic',
+  prefix: 'mongodb://',
 };
 
 export const DEFAULT_REDIS_CONNECTION_STRING = 'redis://localhost:6379';

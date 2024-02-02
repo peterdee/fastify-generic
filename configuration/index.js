@@ -36,10 +36,12 @@ class Configuration {
         || constants.ENVS.development;
 
       this.DATABASE = {
-        connectionString: parsed.DATABASE_CONNECTION_STRING
-          || constants.DATABASE.defaultConnectionString,
-        databaseName: parsed.DATABASE_NAME
-          || constants.DATABASE.defaultDatabaseName,
+        host: parsed.DATABASE_HOST || constants.DATABASE.host,
+        name: parsed.DATABASE_NAME || constants.DATABASE.name,
+        password: parsed.DATABASE_PASSWORD || '',
+        port: parsed.DATABASE_PORT || '',
+        prefix: parsed.DATABASE_PREFIX || constants.DATABASE.prefix,
+        username: parsed.DATABASE_USERNAME || '',
       };
 
       this.PORT = Number(parsed.PORT) || constants.DEFAULT_PORT;

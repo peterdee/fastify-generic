@@ -9,8 +9,7 @@ import rc from './redis/index.js';
   await Promise.all([
     database.connect({
       APP_ENV: configuration.APP_ENV,
-      connectionString: configuration.DATABASE.connectionString,
-      databaseName: configuration.DATABASE.databaseName,
+      ...configuration.DATABASE,
     }),
     rc.connect({
       APP_ENV: configuration.APP_ENV,

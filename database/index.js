@@ -27,15 +27,26 @@ class DatabaseConnection {
 
   async connect({
     APP_ENV = ENVS.development,
-    connectionOptions = {},
-    connectionString = '',
-    databaseName = '',
+    host,
+    name,
+    password,
+    port,
+    prefix,
+    username,
   }) {
-    console.log('@@@@@@@@@@@', connectionString);
     if (!this.client) {
-      this.client = new MongoClient(connectionString, connectionOptions);
+      let connectionString = prefix;
+      if (username) {
+        connectionString += username;
+        if (password) {
+          connectionString += `:${password}`;
+        }
+        connectionString += '@';
+      }
+      connectionString += `${host}${port ? `:${port}` : ''}/?retryWrites=true&w=majority`;
+      this.client = new MongoClient(connectionString);
       await this.client.connect();
-      this.db = this.client.db(databaseName);
+      this.db = this.client.db(name);
 
       logger(`MongoDB connected [${APP_ENV.toUpperCase()}]`);
     }
