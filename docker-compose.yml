@@ -45,6 +45,7 @@ services:
       - MONGO_INITDB_DATABASE=${DATABASE_NAME}
       - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
+    command: mongod --quiet --logpath /dev/null
     volumes:
       - dbdata:/data/db
     networks:
