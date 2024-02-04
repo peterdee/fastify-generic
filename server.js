@@ -2,6 +2,7 @@ import bodyParser from '@fastify/formbody';
 import cors from '@fastify/cors';
 import fastify from 'fastify';
 import { fastifyRequestContext } from '@fastify/request-context';
+import favicon from 'fastify-favicon';
 import helmet from '@fastify/helmet';
 import { join } from 'node:path';
 import serveStatic from '@fastify/static';
@@ -55,6 +56,14 @@ export default async function createServer(APP_ENV) {
         [CONTEXT_STORE_KEYS.searchQueryData]: null,
         [CONTEXT_STORE_KEYS.userId]: null,
       },
+    },
+  );
+
+  await server.register(
+    favicon,
+    {
+      name: 'favicon.svg',
+      path: './assets',
     },
   );
 
