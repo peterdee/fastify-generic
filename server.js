@@ -62,7 +62,7 @@ export default async function createServer(APP_ENV) {
   await server.register(
     favicon,
     {
-      name: 'favicon.svg',
+      name: 'favicon.ico',
       path: './assets',
     },
   );
